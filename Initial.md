@@ -19,3 +19,10 @@ Proposed features for pinpointing friend who would like a post :
 
 (Or we could go with the plain probability model for each user..much faster and might turn to be more accurate).
 
+Code : 
+
+- .getLikes() returns a NamedFacebookType when called on a StatusMessage.
+- .getMessage() returns the content of the post. 
+- .fetchObjects() returns a list of objects when called on FacebookClient.
+
+
