@@ -8,8 +8,61 @@ import com.restfb.types.StatusMessage;
 import com.restfb.types.User;
 
 import Jama.Matrix;
+import Jama.SingularValueDecomposition;
 
 public class LikePrediction {
+	
+	/**
+	  * The difference between 1 and the smallest exactly representable number
+	  * greater than one. Gives an upper bound on the relative error due to
+	  * rounding of floating point numbers.
+	  */
+	 public static double MACHEPS = 2E-16;
+
+	 /**
+	  * Updates MACHEPS for the executing machine.
+	  */
+	 public static void updateMacheps() {
+	  MACHEPS = 1;
+	  do
+	   MACHEPS /= 2;
+	  while (1 + MACHEPS / 2 != 1);
+	 }
+
+	 /**
+	  * Computes the Moore–Penrose pseudoinverse using the SVD method.
+	  * 
+	  * Modified version of the original implementation by Kim van der Linde.
+	  */
+	 public static Matrix pinv(Matrix x) {
+	  int rows = x.getRowDimension();
+	  int cols = x.getColumnDimension();
+	  if (rows < cols) {
+	   Matrix result = pinv(x.transpose());
+	   if (result != null)
+	    result = result.transpose();
+	   return result;
+	  }
+	  SingularValueDecomposition svdX = new SingularValueDecomposition(x);
+	  if (svdX.rank() < 1)
+	   return null;
+	  double[] singularValues = svdX.getSingularValues();
+	  double tol = Math.max(rows, cols) * singularValues[0] * MACHEPS;
+	  double[] singularValueReciprocals = new double[singularValues.length];
+	  for (int i = 0; i < singularValues.length; i++)
+	   if (Math.abs(singularValues[i]) >= tol)
+	    singularValueReciprocals[i] =  1.0 / singularValues[i];
+	  double[][] u = svdX.getU().getArray();
+	  double[][] v = svdX.getV().getArray();
+	  int min = Math.min(cols, u[0].length);
+	  double[][] inverse = new double[cols][rows];
+	  for (int i = 0; i < cols; i++)
+	   for (int j = 0; j < u.length; j++)
+	    for (int k = 0; k < min; k++)
+	     inverse[i][j] += v[i][k] * singularValueReciprocals[k] * u[j][k];
+	  return new Matrix(inverse);
+	 }
+	 
 	//6x1 feature vector for now
 	//Offset,TimeOfDay,NumberOfFriends,PostLength,Emoticons,Hashtags
 	static Matrix X;
@@ -58,7 +111,7 @@ public class LikePrediction {
 	
 	public static void main(String args[])
 	{
-		String MY_ACCESS_TOKEN="CAACEdEose0cBAHv4llkR3vguawlkOVqq1NOFnrcqDkpzBuhqC0mou9irMybiVi4Eerq7OB338ZCNQmIOsbMkkzCVQXNTUhK2lfaMsvEkC2vAqUdtHBAizm8rnPpYWT81ec9PY4EN6j4TDpNdKZAgmtAZBr57E6EbvhnB4jNnB8GFPamkdZCZCJe8WHyZCLGbkhNstl4mTtvQZDZD";
+		String MY_ACCESS_TOKEN="CAACEdEose0cBAK1AnUr5RZA65ntNiav7tEkfpNcgb8pPKjxrI9H3CVHH6N5fNZCxIHcsZB9vEc5uymfP97idIMDe0CrpdfNh7DjLm2F6O2dYjFm1XdzUbPqpNZAzROZAbtj2IZBGlahCZAolUyquNHzLa4ZApNDWZCgXx6reoL0QTucp2hGB9DkqEs7vLxr8qdSFsWVrwZCEuStwZDZD";
 		FacebookClient facebookClient = new DefaultFacebookClient(MY_ACCESS_TOKEN);
 		Connection<Post> pageFeed = facebookClient.fetchConnection("me/feed",Post.class);
 		ArrayList<StatusMessage> statuses=new ArrayList<StatusMessage>();
@@ -105,12 +158,14 @@ public class LikePrediction {
 				
 		Matrix X_transpose=X.transpose();
 		Matrix sampletin=X_transpose.times(X);
-		Matrix sampletinv=sampletin.inverse();
+		Matrix sampletinv=pinv(sampletin);
 		Matrix tempu=sampletinv.times(X_transpose);
 		Theta=tempu.times(Y);
 		//System.out.println("Theta matrix :");
 		//Theta.print(6, 5);		
-		Matrix prediction=(X.times(Theta.transpose()));
-		//prediction.print(3, 5);
+//		X.print(3, 2);
+//		Theta.print(3, 2);
+		Matrix prediction=(X.times(Theta));
+		prediction.print(3, 5);
 	}
 }
