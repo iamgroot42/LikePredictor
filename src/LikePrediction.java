@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.List;
 
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
@@ -11,20 +10,40 @@ import com.restfb.types.User;
 import Jama.Matrix;
 
 public class LikePrediction {
-	//8x1 feature vector for now
-	//Offset,TimeOfDay,NumberOfFriends,PostLength,AttachedLinks,WithTag,Emoticons,Hashtags
-	
-	private void constructY()
+	//6x1 feature vector for now
+	//Offset,TimeOfDay,NumberOfFriends,PostLength,Emoticons,Hashtags
+	static Matrix X;
+	static Matrix Y;
+	static Matrix Theta;
+	private static void constructY(ArrayList<Double> y)
 	{
-		//COnstructs vector of actual likes
+		int i,size=y.size();
+		double rekt[][]=new double[size][1];
+		for(i=0;i<size;i++)
+		{
+			rekt[i][0]=y.get(i);
+		}
+		Y=new Matrix(rekt);
 	}
 	
-	private void constructX()
+	private static void constructX(ArrayList<FVector> x)
 	{
-		//Accepts a list of status messages and consturcts feature matrix
+		int i,n;
+		n=x.size();
+		double[][] ret=new double[n][6]; //Hard coding for now
+		for(i=0;i<n;i++)
+		{
+			ret[i][0]=x.get(i).getOffset();
+			ret[i][1]=x.get(i).getTime_of_day();
+			ret[i][2]=x.get(i).getNumber_of_friends();
+			ret[i][3]=x.get(i).getPost_length();
+			ret[i][4]=x.get(i).getEmoticons();
+			ret[i][5]=x.get(i).getHashtags();
+		}
+		X=new Matrix(ret);
 	}
 	
-	private double[] constructFeatures(FVector x)
+	private static double[] constructFeatures(FVector x)
 	{
 		//Accepts status-message object and constructs features for that example
 		double[] ret=new double[8];
@@ -39,7 +58,7 @@ public class LikePrediction {
 	
 	public static void main(String args[])
 	{
-		String MY_ACCESS_TOKEN="CAACEdEose0cBACwgjuRBaiaEkoXsfyt3SwVftZCVUVOpeOFIX9S3yaOszzSj8pxtLFw5RA7xHktCQu0friIdTsKcUVadETpRIiPuWWVwaP4al1Xi7JaZCM5K4ViPSbiB16CD3n9u4X8fD0OsKB36vJrQusiSqVeFY0njxasdfEsR6zDfVfveLaJzYj6uO7vmUPQWbosgZDZD";
+		String MY_ACCESS_TOKEN="CAACEdEose0cBAHv4llkR3vguawlkOVqq1NOFnrcqDkpzBuhqC0mou9irMybiVi4Eerq7OB338ZCNQmIOsbMkkzCVQXNTUhK2lfaMsvEkC2vAqUdtHBAizm8rnPpYWT81ec9PY4EN6j4TDpNdKZAgmtAZBr57E6EbvhnB4jNnB8GFPamkdZCZCJe8WHyZCLGbkhNstl4mTtvQZDZD";
 		FacebookClient facebookClient = new DefaultFacebookClient(MY_ACCESS_TOKEN);
 		Connection<Post> pageFeed = facebookClient.fetchConnection("me/feed",Post.class);
 		ArrayList<StatusMessage> statuses=new ArrayList<StatusMessage>();
@@ -57,35 +76,41 @@ public class LikePrediction {
 			}
 		}
 		long f=facebookClient.fetchConnection("me/friends",User.class).getTotalCount();
+		ArrayList<FVector> temp=new ArrayList<FVector>();;
+		//Array of features:
+		ArrayList<Double> why=new ArrayList<Double>();
+		int i=0;
 		for(StatusMessage x:statuses)
 		{
-			FVector temp=new FVector();
-//			System.out.println(x.getLikes().size()); //Number of likes for constructing vector 'y'
-//			System.out.println(x.getMessage()); //Status message
+			FVector useless=new FVector();
+			why.add((double)x.getLikes().size());
+			//System.out.println(x.getMessage()); //Status message
 			int hh=x.getUpdatedTime().getHours();
 			int mm=x.getUpdatedTime().getMinutes();
 			int time=hh*60+mm;
 			int s=x.getMessage().length();
-			temp.setNumber_of_friends(f);
-			temp.setTime_of_day(time);
-			temp.setPost_length(s);
+			useless.setNumber_of_friends(f);
+			useless.setTime_of_day(time);
+			useless.setPost_length(s);
+			temp.add(useless);
+			i++;
 			//Hashtag and emoticon pre-processing for some later time
-			
-//			System.out.println(x.getPlace()); //Check presence for location tag ; optional
+			//System.out.println(x.getPlace()); //Check presence for location tag ; optional
 			//Process message to check emoticons, length of message, hashtags 
-			
 		}
-			
-		double[][] sample={{1,5,4},{1,3,7},{7,9,4}};
-		Matrix samplem=new Matrix(sample);		
-		Matrix samplet=samplem.transpose();
-		Matrix sampletin=samplet.times(samplem);
+		//Constructing vector 'Y'
+		constructY(why);
+		//Constructing matrix 'X'
+		constructX(temp);
+				
+		Matrix X_transpose=X.transpose();
+		Matrix sampletin=X_transpose.times(X);
 		Matrix sampletinv=sampletin.inverse();
-		double[][] actual={{12},{147},{91}};
-		Matrix actualm=new Matrix(actual);
-		Matrix temp=sampletinv.times(samplet);
-		Matrix theta=temp.times(actualm);
-		System.out.println("Theta matrix :");
-		theta.print(3, 5);
+		Matrix tempu=sampletinv.times(X_transpose);
+		Theta=tempu.times(Y);
+		//System.out.println("Theta matrix :");
+		//Theta.print(6, 5);		
+		Matrix prediction=(X.times(Theta.transpose()));
+		//prediction.print(3, 5);
 	}
 }
