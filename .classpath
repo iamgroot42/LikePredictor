@@ -9,5 +9,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="/home/anshuman/Documents/Jama/Jama-1.0.3.jar"/>
+	<classpathentry kind="lib" path="/home/anshuman/Documents/restfb-1.16.0/restfb-1.16.0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
