@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
@@ -12,28 +13,24 @@ import Jama.SingularValueDecomposition;
 
 public class LikePrediction {
 	
-	/**
-	  * The difference between 1 and the smallest exactly representable number
-	  * greater than one. Gives an upper bound on the relative error due to
-	  * rounding of floating point numbers.
-	  */
-	 public static double MACHEPS = 2E-16;
 
-	 /**
-	  * Updates MACHEPS for the executing machine.
-	  */
-	 public static void updateMacheps() {
+	//Code for calculating pseudo-inverse (for non-invertible matrices) using SVD taken from
+	// http://the-lost-beauty.blogspot.in/2009/04/moore-penrose-pseudoinverse-in-jama.html
+	// Please don't consider the following segment while checking for plagiarism 
+	
+	public static double MACHEPS = 2E-16;
+	static Matrix X;
+	static Matrix Y;
+	static Matrix Theta;
+	static long Number_of_friends;
+	//Inverse Code Starts
+	public static void updateMacheps() {
 	  MACHEPS = 1;
 	  do
 	   MACHEPS /= 2;
 	  while (1 + MACHEPS / 2 != 1);
 	 }
 
-	 /**
-	  * Computes the Moore–Penrose pseudoinverse using the SVD method.
-	  * 
-	  * Modified version of the original implementation by Kim van der Linde.
-	  */
 	 public static Matrix pinv(Matrix x) {
 	  int rows = x.getRowDimension();
 	  int cols = x.getColumnDimension();
@@ -62,12 +59,10 @@ public class LikePrediction {
 	     inverse[i][j] += v[i][k] * singularValueReciprocals[k] * u[j][k];
 	  return new Matrix(inverse);
 	 }
-	 
-	//6x1 feature vector for now
+	 //Inverse Code Ends
+
+
 	//Offset,TimeOfDay,NumberOfFriends,PostLength,Emoticons,Hashtags
-	static Matrix X;
-	static Matrix Y;
-	static Matrix Theta;
 	private static void constructY(ArrayList<Double> y)
 	{
 		int i,size=y.size();
@@ -109,9 +104,8 @@ public class LikePrediction {
 		return ret.clone();
 	}
 	
-	public static void main(String args[])
+	private static void Train(String MY_ACCESS_TOKEN)
 	{
-		String MY_ACCESS_TOKEN="CAACEdEose0cBAK1AnUr5RZA65ntNiav7tEkfpNcgb8pPKjxrI9H3CVHH6N5fNZCxIHcsZB9vEc5uymfP97idIMDe0CrpdfNh7DjLm2F6O2dYjFm1XdzUbPqpNZAzROZAbtj2IZBGlahCZAolUyquNHzLa4ZApNDWZCgXx6reoL0QTucp2hGB9DkqEs7vLxr8qdSFsWVrwZCEuStwZDZD";
 		FacebookClient facebookClient = new DefaultFacebookClient(MY_ACCESS_TOKEN);
 		Connection<Post> pageFeed = facebookClient.fetchConnection("me/feed",Post.class);
 		ArrayList<StatusMessage> statuses=new ArrayList<StatusMessage>();
@@ -128,7 +122,7 @@ public class LikePrediction {
 				catch(Exception e){}
 			}
 		}
-		long f=facebookClient.fetchConnection("me/friends",User.class).getTotalCount();
+		Number_of_friends=facebookClient.fetchConnection("me/friends",User.class).getTotalCount();
 		ArrayList<FVector> temp=new ArrayList<FVector>();;
 		//Array of features:
 		ArrayList<Double> why=new ArrayList<Double>();
@@ -137,12 +131,11 @@ public class LikePrediction {
 		{
 			FVector useless=new FVector();
 			why.add((double)x.getLikes().size());
-			//System.out.println(x.getMessage()); //Status message
 			int hh=x.getUpdatedTime().getHours();
 			int mm=x.getUpdatedTime().getMinutes();
 			int time=hh*60+mm;
 			int s=x.getMessage().length();
-			useless.setNumber_of_friends(f);
+			useless.setNumber_of_friends(Number_of_friends);
 			useless.setTime_of_day(time);
 			useless.setPost_length(s);
 			temp.add(useless);
@@ -161,11 +154,37 @@ public class LikePrediction {
 		Matrix sampletinv=pinv(sampletin);
 		Matrix tempu=sampletinv.times(X_transpose);
 		Theta=tempu.times(Y);
+		System.out.println("Training complete!");
 		//System.out.println("Theta matrix :");
 		//Theta.print(6, 5);		
 //		X.print(3, 2);
 //		Theta.print(3, 2);
-		Matrix prediction=(X.times(Theta));
-		prediction.print(3, 5);
+	}
+
+	public static void main(String args[])
+	{
+		Scanner in=new Scanner(System.in);
+		String at="";
+		System.out.println("Enter access token");
+		at=in.nextLine();
+		//Training predictor :
+		Train(at);
+		String input="";
+		System.out.println("Enter post");
+		input=in.nextLine();
+		int hh=14;
+		int mm=50;
+		int time=hh*60+mm;
+		double[][] ret=new double[1][6]; //Hard coding for now
+		ret[0][0]=1;
+		ret[0][1]=time;
+		ret[0][2]=Number_of_friends;
+		ret[0][3]=input.length();
+		ret[0][4]=0;
+		ret[0][5]=0;
+		Matrix X_test=new Matrix(ret);
+		System.out.println("Prediction : ");
+		Matrix prediction=(X_test.times(Theta));
+		prediction.print(1, 4);
 	}
 }
