@@ -12,15 +12,16 @@ import Jama.Matrix;
 import Jama.SingularValueDecomposition;
 
 public class LikePrediction {
-	
 
 	//Code for calculating pseudo-inverse (for non-invertible matrices) using SVD taken from
 	// http://the-lost-beauty.blogspot.in/2009/04/moore-penrose-pseudoinverse-in-jama.html
 	// Please don't consider the following segment while checking for plagiarism 
 	
 	public static double MACHEPS = 2E-16;
-	static Matrix X;
-	static Matrix Y;
+	static Matrix X_train;
+	static Matrix X_test;
+	static Matrix Y_train;
+	static Matrix Y_test;
 	static Matrix Theta;
 	static long Number_of_friends;
 	//Inverse Code Starts
@@ -61,24 +62,29 @@ public class LikePrediction {
 	 }
 	 //Inverse Code Ends
 
-
-	//Offset,TimeOfDay,NumberOfFriends,PostLength,Emoticons,Hashtags
+	//Offset,TimeOfDay,NumberOfFriends,PostLength,Emoticons,Hashtags,NumberOfComments,Place
 	private static void constructY(ArrayList<Double> y)
 	{
-		int i,size=y.size();
+		int i,c,size=y.size();
 		double rekt[][]=new double[size][1];
 		for(i=0;i<size;i++)
 		{
 			rekt[i][0]=y.get(i);
 		}
-		Y=new Matrix(rekt);
+		double real_deal[][]=Shuffle2DArray.shuffleY(rekt, size); 
+		Matrix chloro=new Matrix(real_deal);
+		c=(6*size)/10;
+		Y_train=chloro.getMatrix(0,c,0,7); //60% 
+		Y_test=chloro.getMatrix(c+1,size-1,0,7); //40%
 	}
 	
-	private static void constructX(ArrayList<FVector> x)
+	private static void setXandTest(ArrayList<FVector> x)
 	{
-		int i,n;
+		Matrix chloro;
+		int i,n,s;
 		n=x.size();
-		double[][] ret=new double[n][6]; //Hard coding for now
+		double[][] ret=new double[n][8]; //Hard coding for now
+		double real_deal[][];
 		for(i=0;i<n;i++)
 		{
 			ret[i][0]=x.get(i).getOffset();
@@ -87,8 +93,15 @@ public class LikePrediction {
 			ret[i][3]=x.get(i).getPost_length();
 			ret[i][4]=x.get(i).getEmoticons();
 			ret[i][5]=x.get(i).getHashtags();
+			ret[i][6]=x.get(i).getNumber_of_comments();
+			ret[i][7]=x.get(i).getPlace();
 		}
-		X=new Matrix(ret);
+		//Shuffling array to remove any bias
+		real_deal=Shuffle2DArray.shuffleX(ret,n);
+		s=(6*n)/10;
+		chloro=new Matrix(real_deal);
+		X_train=chloro.getMatrix(0,s,0,7); //60% 
+		X_test=chloro.getMatrix(s+1,n-1,0,7); //40%
 	}
 	
 	private static double[] constructFeatures(FVector x)
@@ -101,6 +114,8 @@ public class LikePrediction {
 		ret[3]=x.getPost_length();
 		ret[4]=x.getEmoticons();
 		ret[5]=x.getHashtags();
+		ret[6]=x.getNumber_of_comments();
+		ret[7]=x.getPlace();
 		return ret.clone();
 	}
 	
@@ -139,26 +154,22 @@ public class LikePrediction {
 			useless.setTime_of_day(time);
 			useless.setPost_length(s);
 			temp.add(useless);
+			useless.setNumber_of_comments(x.getComments().size());
+			if(x.getPlace()!=null) useless.setPlace(1);
 			i++;
-			//Hashtag and emoticon pre-processing for some later time
-			//System.out.println(x.getPlace()); //Check presence for location tag ; optional
-			//Process message to check emoticons, length of message, hashtags 
+			//Hashtag and emoticon pre-processing for some later time 
 		}
+		//Constructing matrix 'X'
+		setXandTest(temp);
 		//Constructing vector 'Y'
 		constructY(why);
-		//Constructing matrix 'X'
-		constructX(temp);
 				
-		Matrix X_transpose=X.transpose();
-		Matrix sampletin=X_transpose.times(X);
+		Matrix X_transpose=X_train.transpose();
+		Matrix sampletin=X_transpose.times(X_train);
 		Matrix sampletinv=pinv(sampletin);
 		Matrix tempu=sampletinv.times(X_transpose);
-		Theta=tempu.times(Y);
+		Theta=tempu.times(Y_train);
 		System.out.println("Training complete!");
-		//System.out.println("Theta matrix :");
-		//Theta.print(6, 5);		
-//		X.print(3, 2);
-//		Theta.print(3, 2);
 	}
 
 	public static void main(String args[])
@@ -167,24 +178,11 @@ public class LikePrediction {
 		String at="";
 		System.out.println("Enter access token");
 		at=in.nextLine();
+		in.close();
 		//Training predictor :
 		Train(at);
-		String input="";
-		System.out.println("Enter post");
-		input=in.nextLine();
-		int hh=14;
-		int mm=50;
-		int time=hh*60+mm;
-		double[][] ret=new double[1][6]; //Hard coding for now
-		ret[0][0]=1;
-		ret[0][1]=time;
-		ret[0][2]=Number_of_friends;
-		ret[0][3]=input.length();
-		ret[0][4]=0;
-		ret[0][5]=0;
-		Matrix X_test=new Matrix(ret);
-		System.out.println("Prediction : ");
-		Matrix prediction=(X_test.times(Theta));
-		prediction.print(1, 4);
+		//Prediction :
+		Matrix prediction=Theta.times(X_test);
+		prediction.print(8,3);
 	}
 }

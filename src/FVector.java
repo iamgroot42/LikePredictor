@@ -6,11 +6,26 @@ public class FVector {
 	int post_length;
 	int emoticons;
 	int hashtags;
+	int number_of_comments;
+	int place;
+	public int getNumber_of_comments() {
+		return number_of_comments;
+	}
+	public void setNumber_of_comments(int number_of_comments) {
+		this.number_of_comments = number_of_comments;
+	}
+	public int getPlace() {
+		return place;
+	}
+	public void setPlace(int place) {
+		this.place = place;
+	}
 	public FVector()
 	{
 		offset=1;
 		emoticons=0;
 		hashtags=0;
+		place=0;
 	}
 	public int getOffset() {
 		return offset;
