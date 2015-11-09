@@ -8,7 +8,7 @@ public class Shuffle2DArray {
 	public static double[][] shuffleX(double[][] x,int n)
 	{
 		int i,j;
-		double[][] ret=new double[n][8]; //Hard coded 8
+		double[][] ret=new double[n][11]; //Hard coded 11
 		shuf=new ArrayList<Integer>();
 		for(i=0;i<n;i++)
 		{
@@ -18,7 +18,7 @@ public class Shuffle2DArray {
 		Collections.shuffle(shuf);
 		for(Integer y:shuf)
 		{
-			for(j=0;j<8;j++)
+			for(j=0;j<11;j++) //Hard coded 11
 			{
 				ret[i][j]=x[y][j];
 			}

@@ -62,7 +62,6 @@ public class LikePrediction {
 	 }
 	 //Inverse Code Ends
 
-	//Offset,TimeOfDay,NumberOfFriends,PostLength,Emoticons,Hashtags,NumberOfComments,Place
 	private static void constructY(ArrayList<Double> y)
 	{
 		int i,c,size=y.size();
@@ -74,7 +73,7 @@ public class LikePrediction {
 		double real_deal[][]=Shuffle2DArray.shuffleY(rekt, size); 
 		Matrix chloro=new Matrix(real_deal);
 		c=(6*size)/10;
-		c=size-1;
+		c=size-1; //change later
 		Y_train=chloro.getMatrix(0,c,0,0); //60%
 //		Y_test=chloro.getMatrix(c+1,size-1,0,0); //40%
 	}
@@ -84,41 +83,29 @@ public class LikePrediction {
 		Matrix chloro;
 		int i,n,s;
 		n=x.size();
-		double[][] ret=new double[n][8]; //Hard coding for now
+		double[][] ret=new double[n][11]; //Hard coding for now
 		double real_deal[][];
 		for(i=0;i<n;i++)
 		{
 			ret[i][0]=x.get(i).getOffset();
-			ret[i][1]=x.get(i).getTime_of_day();
-			ret[i][2]=x.get(i).getNumber_of_friends();
-			ret[i][3]=x.get(i).getPost_length();
-			ret[i][4]=x.get(i).getEmoticons();
-			ret[i][5]=x.get(i).getHashtags();
-			ret[i][6]=x.get(i).getNumber_of_comments();
-			ret[i][7]=x.get(i).getPlace();
+			ret[i][1]=x.get(i).getAttachments();
+			ret[i][2]=x.get(i).getComments();
+			ret[i][3]=x.get(i).getPlace();
+			ret[i][4]=x.get(i).getTime_of_day();
+			ret[i][5]=x.get(i).getPost_length();
+			ret[i][6]=x.get(i).getTags();
+			ret[i][7]=x.get(i).getPicture();
+			ret[i][8]=x.get(i).getShares();
+			ret[i][9]=x.get(i).getWith_tags();
+			ret[i][10]=x.get(i).getNumber_of_friends();
 		}
 		//Shuffling array to remove any bias
 		real_deal=Shuffle2DArray.shuffleX(ret,n);
 		s=(6*n)/10;
-		s=n-1;
+		s=n-1; //change later
 		chloro=new Matrix(real_deal);
-		X_train=chloro.getMatrix(0,s,0,7); //60% 
-//		X_test=chloro.getMatrix(s+1,n-1,0,7); //40%
-	}
-	
-	private static double[] constructFeatures(FVector x)
-	{
-		//Accepts status-message object and constructs features for that example
-		double[] ret=new double[8];
-		ret[0]=x.getOffset();
-		ret[1]=x.getTime_of_day();
-		ret[2]=x.getNumber_of_friends();
-		ret[3]=x.getPost_length();
-		ret[4]=x.getEmoticons();
-		ret[5]=x.getHashtags();
-		ret[6]=x.getNumber_of_comments();
-		ret[7]=x.getPlace();
-		return ret.clone();
+		X_train=chloro.getMatrix(0,s,0,10); //60% 
+//		X_test=chloro.getMatrix(s+1,n-1,0,10); //40%
 	}
 	
 	private static void Train(String MY_ACCESS_TOKEN)
@@ -126,8 +113,8 @@ public class LikePrediction {
 		FacebookClient facebookClient = new DefaultFacebookClient(MY_ACCESS_TOKEN);
 		System.out.println("Hi, "+facebookClient.fetchObject("me", User.class).getName());
 		System.out.println("Training...");
-		Connection<Post> pageFeed = facebookClient.fetchConnection("me/feed",Post.class);
-		ArrayList<StatusMessage> statuses=new ArrayList<StatusMessage>();
+		Connection<Post> pageFeed = facebookClient.fetchConnection("me/posts",Post.class);
+		ArrayList<Post> statuses=new ArrayList<Post>();
 		for(Post i:pageFeed.getData())
 		{
 			String idee=i.getId();
@@ -135,7 +122,7 @@ public class LikePrediction {
 			{
 				try
 				{
-					StatusMessage user = facebookClient.fetchObject(idee, StatusMessage.class);
+					Post user = facebookClient.fetchObject(idee, Post.class);
 					statuses.add(user);
 				}
 				catch(Exception e){}
@@ -146,22 +133,53 @@ public class LikePrediction {
 		//Array of features:
 		ArrayList<Double> why=new ArrayList<Double>();
 		int i=0;
-		for(StatusMessage x:statuses)
+		for(Post x:statuses)
 		{
 			FVector useless=new FVector();
-			why.add((double)x.getLikes().size());
+			if(x.getLikesCount()!=null)
+			{
+				why.add((double)x.getLikesCount());
+			}
+			else
+			{
+				why.add((double)0);
+			}
+			if(x.getAttachments()!=null)
+			{
+				useless.setAttachments(1);
+			}
+			if(x.getCommentsCount()!=null)
+			{
+				useless.setComments(x.getCommentsCount());
+			}
+			if(x.getPlace()!=null)
+			{
+				useless.setPlace(1);
+			}			
 			int hh=x.getUpdatedTime().getHours();
 			int mm=x.getUpdatedTime().getMinutes();
 			int time=hh*60+mm;
-			int s=x.getMessage().length();
-			useless.setNumber_of_friends(Number_of_friends);
 			useless.setTime_of_day(time);
+			int s=x.getMessage().length();
 			useless.setPost_length(s);
-			temp.add(useless);
-			useless.setNumber_of_comments(x.getComments().size());
-			if(x.getPlace()!=null) useless.setPlace(1);
+			if(x.getMessageTags()!=null)
+			{
+				useless.setTags(x.getMessageTags().size());
+			}
+			if(x.getPicture()!=null)
+			{
+				useless.setPicture(1);
+			}
+			if(x.getSharesCount()!=null)
+			{
+				useless.setShares(x.getSharesCount());
+			}
+			if(x.getWithTags()!=null)
+			{
+				useless.setWith_tags(x.getWithTags().size());
+			}
+			useless.setNumber_of_friends(Number_of_friends);
 			i++;
-			//Hashtag and emoticon pre-processing for some later time 
 		}
 		//Constructing matrix 'X'
 		setXandTest(temp);

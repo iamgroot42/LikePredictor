@@ -1,63 +1,87 @@
 
 public class FVector {
-	int offset;
-	int time_of_day;
-	long number_of_friends;
-	int post_length;
-	int emoticons;
-	int hashtags;
-	int number_of_comments;
-	int place;
-	public int getNumber_of_comments() {
-		return number_of_comments;
-	}
-	public void setNumber_of_comments(int number_of_comments) {
-		this.number_of_comments = number_of_comments;
-	}
-	public int getPlace() {
-		return place;
-	}
-	public void setPlace(int place) {
-		this.place = place;
-	}
+	private long offset;
+	private long attachments;
+	private long comments;
+	private long place;
+	private long time_of_day;
+	private long post_length;
+	private long tags;
+	private long picture;
+	private long shares;
+	private long with_tags;
+	private long number_of_friends;
 	public FVector()
 	{
 		offset=1;
-		emoticons=0;
-		hashtags=0;
-		place=0;
+		attachments=comments=place=time_of_day=post_length=tags=0;
+		picture=shares=with_tags=0;
+		number_of_friends=0;
 	}
-	public int getOffset() {
+	public long getOffset() {
 		return offset;
 	}
-	public int getTime_of_day() {
+	public void setOffset(long offset) {
+		this.offset = offset;
+	}
+	public long getAttachments() {
+		return attachments;
+	}
+	public void setAttachments(long attachments) {
+		this.attachments = attachments;
+	}
+	public long getComments() {
+		return comments;
+	}
+	public void setComments(long comments) {
+		this.comments = comments;
+	}
+	public long getPlace() {
+		return place;
+	}
+	public void setPlace(long place) {
+		this.place = place;
+	}
+	public long getTime_of_day() {
 		return time_of_day;
 	}
-	public void setTime_of_day(int time_of_day) {
+	public void setTime_of_day(long time_of_day) {
 		this.time_of_day = time_of_day;
+	}
+	public long getPost_length() {
+		return post_length;
+	}
+	public void setPost_length(long post_length) {
+		this.post_length = post_length;
+	}
+	public long getTags() {
+		return tags;
+	}
+	public void setTags(long tags) {
+		this.tags = tags;
+	}
+	public long getPicture() {
+		return picture;
+	}
+	public void setPicture(long picture) {
+		this.picture = picture;
+	}
+	public long getShares() {
+		return shares;
+	}
+	public void setShares(long shares) {
+		this.shares = shares;
+	}
+	public long getWith_tags() {
+		return with_tags;
+	}
+	public void setWith_tags(long with_tags) {
+		this.with_tags = with_tags;
 	}
 	public long getNumber_of_friends() {
 		return number_of_friends;
 	}
 	public void setNumber_of_friends(long number_of_friends) {
 		this.number_of_friends = number_of_friends;
-	}
-	public int getPost_length() {
-		return post_length;
-	}
-	public void setPost_length(int post_length) {
-		this.post_length = post_length;
-	}
-	public int getEmoticons() {
-		return emoticons;
-	}
-	public void setEmoticons(int emoticons) {
-		this.emoticons = emoticons;
-	}
-	public int getHashtags() {
-		return hashtags;
-	}
-	public void setHashtags(int hashtags) {
-		this.hashtags = hashtags;
 	}
 }
