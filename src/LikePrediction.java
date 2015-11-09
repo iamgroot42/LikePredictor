@@ -182,12 +182,25 @@ public class LikePrediction {
 		at=in.nextLine();
 		in.close();
 		//Training predictor :
+		System.out.println("Training...");
 		Train(at);
 		//prediction.print(3, 2);
 		Matrix prediction=X_train.times(Theta);
-		System.out.println("Predicted:");
-		prediction.print(1, 0);
-		System.out.println("Actual:");
-		Y_train.print(1, 0);
+		double[][] pred,act;
+		pred=prediction.getArray();
+		act=Y_train.getArray();
+		System.out.println("Predicted | Actual");
+		int i,n;
+		n=Y_train.getRowDimension();
+		double error=0;
+		for(i=0;i<n;i++)
+		{
+			if(pred[i][0]<0) pred[i][0]=0;
+			System.out.println((int)pred[i][0]+"           "+(int)act[i][0]);
+			error+=((double)((int)pred[i][0]-(int)act[i][0]))*((double)((int)pred[i][0]-(int)act[i][0]));
+		}
+		error/=n;
+		System.out.println("Training error : "+error);
+		//Hard coded training set as 100% of data
 	}
 }
