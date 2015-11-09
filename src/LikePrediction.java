@@ -124,6 +124,8 @@ public class LikePrediction {
 	private static void Train(String MY_ACCESS_TOKEN)
 	{
 		FacebookClient facebookClient = new DefaultFacebookClient(MY_ACCESS_TOKEN);
+		System.out.println("Hi, "+facebookClient.fetchObject("me", User.class).getName());
+		System.out.println("Training...");
 		Connection<Post> pageFeed = facebookClient.fetchConnection("me/feed",Post.class);
 		ArrayList<StatusMessage> statuses=new ArrayList<StatusMessage>();
 		for(Post i:pageFeed.getData())
@@ -182,7 +184,6 @@ public class LikePrediction {
 		at=in.nextLine();
 		in.close();
 		//Training predictor :
-		System.out.println("Training...");
 		Train(at);
 		//prediction.print(3, 2);
 		Matrix prediction=X_train.times(Theta);
