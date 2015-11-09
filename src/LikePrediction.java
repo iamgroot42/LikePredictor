@@ -74,8 +74,8 @@ public class LikePrediction {
 		double real_deal[][]=Shuffle2DArray.shuffleY(rekt, size); 
 		Matrix chloro=new Matrix(real_deal);
 		c=(6*size)/10;
-		Y_train=chloro.getMatrix(0,c,0,7); //60% 
-		Y_test=chloro.getMatrix(c+1,size-1,0,7); //40%
+		Y_train=chloro.getMatrix(0,c,0,0); //60%
+		Y_test=chloro.getMatrix(c+1,size-1,0,0); //40%
 	}
 	
 	private static void setXandTest(ArrayList<FVector> x)
@@ -182,7 +182,5 @@ public class LikePrediction {
 		//Training predictor :
 		Train(at);
 		//Prediction :
-		Matrix prediction=Theta.times(X_test);
-		prediction.print(8,3);
 	}
 }

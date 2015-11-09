@@ -9,7 +9,7 @@ public class Shuffle2DArray {
 	{
 		int i,j;
 		double[][] ret=new double[n][8]; //Hard coded 8
-		List<Integer> shuf=new ArrayList<Integer>();
+		shuf=new ArrayList<Integer>();
 		for(i=0;i<n;i++)
 		{
 			shuf.add(i);
