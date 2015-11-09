@@ -118,15 +118,9 @@ public class LikePrediction {
 		for(Post i:pageFeed.getData())
 		{
 			String idee=i.getId();
-			if(i.getType().equals("status"))
-			{
-				try
-				{
-					Post user = facebookClient.fetchObject(idee, Post.class);
-					statuses.add(user);
-				}
-				catch(Exception e){}
-			}
+			System.out.println(i.getType());
+			Post user = facebookClient.fetchObject(idee, Post.class);
+			statuses.add(user);
 		}
 		Number_of_friends=facebookClient.fetchConnection("me/friends",User.class).getTotalCount();
 		ArrayList<FVector> temp=new ArrayList<FVector>();;
@@ -136,9 +130,9 @@ public class LikePrediction {
 		for(Post x:statuses)
 		{
 			FVector useless=new FVector();
-			if(x.getLikesCount()!=null)
+			if(x.getLikes()!=null)
 			{
-				why.add((double)x.getLikesCount());
+;				why.add((double)x.getLikes().getData().size());
 			}
 			else
 			{
@@ -146,11 +140,11 @@ public class LikePrediction {
 			}
 			if(x.getAttachments()!=null)
 			{
-				useless.setAttachments(1);
+				useless.setAttachments(x.getAttachments().getData().size());
 			}
-			if(x.getCommentsCount()!=null)
+			if(x.getComments()!=null)
 			{
-				useless.setComments(x.getCommentsCount());
+				useless.setComments(x.getComments().getData().size());
 			}
 			if(x.getPlace()!=null)
 			{
@@ -160,7 +154,11 @@ public class LikePrediction {
 			int mm=x.getUpdatedTime().getMinutes();
 			int time=hh*60+mm;
 			useless.setTime_of_day(time);
-			int s=x.getMessage().length();
+			int s=0;
+			if(x.getMessage()!=null)
+			{
+				s=x.getMessage().length();
+			}
 			useless.setPost_length(s);
 			if(x.getMessageTags()!=null)
 			{
@@ -179,6 +177,7 @@ public class LikePrediction {
 				useless.setWith_tags(x.getWithTags().size());
 			}
 			useless.setNumber_of_friends(Number_of_friends);
+			temp.add(useless);
 			i++;
 		}
 		//Constructing matrix 'X'
@@ -212,14 +211,20 @@ public class LikePrediction {
 		int i,n;
 		n=Y_train.getRowDimension();
 		double error=0;
+		double count=0;
 		for(i=0;i<n;i++)
 		{
 			if(pred[i][0]<0) pred[i][0]=0;
 			System.out.println((int)pred[i][0]+"           "+(int)act[i][0]);
 			error+=((double)((int)pred[i][0]-(int)act[i][0]))*((double)((int)pred[i][0]-(int)act[i][0]));
+			if(pred[i][0]-act[i][0]>5 || pred[i][0]-act[i][0]<-5)
+			{
+				count++;
+			}
 		}
 		error/=n;
-		System.out.println("Training error : "+error);
+		System.out.println("Error with margin of 5 likes " + (count/n)+"%");
+		System.out.println("Absolute Training error : "+error);
 		//Hard coded training set as 100% of data
 	}
 }
