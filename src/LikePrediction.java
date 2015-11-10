@@ -1,11 +1,13 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
+import com.restfb.types.Likes;
+import com.restfb.types.NamedFacebookType;
 import com.restfb.types.Post;
-import com.restfb.types.StatusMessage;
 import com.restfb.types.User;
 
 import Jama.Matrix;
@@ -24,6 +26,7 @@ public class LikePrediction {
 	static Matrix Y_test;
 	static Matrix Theta;
 	static long Number_of_friends;
+	static FacebookClient facebookClient;
 	//Inverse Code Starts
 	public static void updateMacheps() {
 	  MACHEPS = 1;
@@ -108,10 +111,8 @@ public class LikePrediction {
 //		X_test=chloro.getMatrix(s+1,n-1,0,10); //40%
 	}
 	
-	private static void Train(String MY_ACCESS_TOKEN)
-	{
-		FacebookClient facebookClient = new DefaultFacebookClient(MY_ACCESS_TOKEN);
-		System.out.println("Hi, "+facebookClient.fetchObject("me", User.class).getName());
+	private static void Train()
+	{		
 		System.out.println("Training...");
 		Connection<Post> pageFeed = facebookClient.fetchConnection("me/posts",Post.class);
 		ArrayList<Post> statuses=new ArrayList<Post>();
@@ -132,7 +133,8 @@ public class LikePrediction {
 			FVector useless=new FVector();
 			if(x.getLikes()!=null)
 			{
-;				why.add((double)x.getLikes().getData().size());
+				if(x.getLikes().getData()!=null) WhoWillLike.addLike(x.getLikes().getData());
+				why.add((double)x.getLikes().getData().size());
 			}
 			else
 			{
@@ -200,14 +202,15 @@ public class LikePrediction {
 		System.out.println("Enter access token");
 		at=in.nextLine();
 		in.close();
+		facebookClient = new DefaultFacebookClient(at);
+		System.out.println("Hi, "+facebookClient.fetchObject("me", User.class).getName());
 		//Training predictor :
-		Train(at);
+		Train();
 		//prediction.print(3, 2);
 		Matrix prediction=X_train.times(Theta);
 		double[][] pred,act;
 		pred=prediction.getArray();
 		act=Y_train.getArray();
-		System.out.println("Predicted | Actual");
 		int i,n;
 		n=Y_train.getRowDimension();
 		double error=0;
@@ -215,15 +218,25 @@ public class LikePrediction {
 		for(i=0;i<n;i++)
 		{
 			if(pred[i][0]<0) pred[i][0]=0;
-			System.out.println((int)pred[i][0]+"           "+(int)act[i][0]);
-			error+=((double)((int)pred[i][0]-(int)act[i][0]))*((double)((int)pred[i][0]-(int)act[i][0]));
+			if(Math.round(pred[i][0])>Number_of_friends) pred[i][0]=Number_of_friends;
+//			System.out.println((int)pred[i][0]+"           "+(int)act[i][0]);
+			error+=((double)(Math.round(pred[i][0])-(int)act[i][0]))*((double)(Math.round(pred[i][0])-(int)act[i][0]));
 			if(pred[i][0]-act[i][0]>5 || pred[i][0]-act[i][0]<-5)
 			{
 				count++;
 			}
+			System.out.println("Predicted likes : "+Math.round(pred[i][0]));
+			System.out.println("Actual likes : "+(int)act[i][0]);
+			System.out.println("Users most likely to like this post : ");
+			List<String> print_it=WhoWillLike.getTopK((int)pred[i][0]);
+			for(String jedi:print_it)
+			{
+				System.out.println(facebookClient.fetchObject(jedi, User.class).getName());
+			}
+			System.out.println("\n");
 		}
 		error/=n;
-		System.out.println("Error with margin of 5 likes " + (count/n)+"%");
+		System.out.println("Error with margin of 5 likes " + (count*100/n)+"%");
 		System.out.println("Absolute Training error : "+error);
 		//Hard coded training set as 100% of data
 	}
