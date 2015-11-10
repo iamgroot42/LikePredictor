@@ -20,13 +20,13 @@ public class LikePrediction {
 	// Please don't consider the following segment while checking for plagiarism 
 	
 	public static double MACHEPS = 2E-16;
-	static Matrix X_train;
-	static Matrix X_test;
-	static Matrix Y_train;
-	static Matrix Y_test;
-	static Matrix Theta;
-	static long Number_of_friends;
-	static FacebookClient facebookClient;
+	private static Matrix X_train;
+	private	static Matrix X_test;
+	private static Matrix Y_train;
+	private static Matrix Y_test;
+	private static Matrix Theta;
+	private static long Number_of_friends;
+	private static FacebookClient facebookClient;
 	//Inverse Code Starts
 	public static void updateMacheps() {
 	  MACHEPS = 1;
@@ -195,13 +195,13 @@ public class LikePrediction {
 		System.out.println("Training complete!");
 	}
 
-	public static void main(String args[])
+	public static double Runner(String at)
 	{
-		Scanner in=new Scanner(System.in);
-		String at="";
-		System.out.println("Enter access token");
-		at=in.nextLine();
-		in.close();
+//		Scanner in=new Scanner(System.in);
+//		String at="";
+//		System.out.println("Enter access token");
+//		at=in.nextLine();
+//		in.close();
 		facebookClient = new DefaultFacebookClient(at);
 		System.out.println("Hi, "+facebookClient.fetchObject("me", User.class).getName());
 		//Training predictor :
@@ -238,6 +238,7 @@ public class LikePrediction {
 		error/=n;
 		System.out.println("Error with margin of 5 likes " + (count*100/n)+"%");
 		System.out.println("Absolute Training error : "+error);
+		return error;
 		//Hard coded training set as 100% of data
 	}
 }
