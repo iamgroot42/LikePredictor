@@ -1,3 +1,6 @@
+//@author : Anshuman Suri - 2014021
+//@author : Satyam Kumar - 2014096
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -5,6 +8,7 @@ import java.util.Scanner;
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
+import com.restfb.Parameter;
 import com.restfb.types.Likes;
 import com.restfb.types.NamedFacebookType;
 import com.restfb.types.Post;
@@ -114,14 +118,16 @@ public class LikePrediction {
 	private static void Train()
 	{		
 		System.out.println("Training...");
-		Connection<Post> pageFeed = facebookClient.fetchConnection("me/posts",Post.class);
 		ArrayList<Post> statuses=new ArrayList<Post>();
+		Connection<Post> pageFeed = facebookClient.fetchConnection("me/posts",Post.class,Parameter.with("limit", 100));
 		for(Post i:pageFeed.getData())
 		{
 			String idee=i.getId();
-			System.out.println(i.getType());
-			Post user = facebookClient.fetchObject(idee, Post.class);
-			statuses.add(user);
+			Post post = facebookClient.fetchObject(idee,
+					  Post.class,
+					  Parameter.with("fields", "likes.summary(true),comments.summary(true),type,with_tags,updated_time,shares,place,picture,message_tags,message,link"));
+			System.out.println(post.getType());
+			statuses.add(post);
 		}
 		Number_of_friends=facebookClient.fetchConnection("me/friends",User.class).getTotalCount();
 		ArrayList<FVector> temp=new ArrayList<FVector>();;
@@ -131,54 +137,66 @@ public class LikePrediction {
 		for(Post x:statuses)
 		{
 			FVector useless=new FVector();
-			if(x.getLikes()!=null)
+			if(x.getLikesCount()!=null)
 			{
 				if(x.getLikes().getData()!=null) WhoWillLike.addLike(x.getLikes().getData());
-				why.add((double)x.getLikes().getData().size());
+				why.add((double)x.getLikesCount());
 			}
 			else
 			{
 				why.add((double)0);
 			}
+			//Remove this feature :
 			if(x.getAttachments()!=null)
 			{
 				useless.setAttachments(x.getAttachments().getData().size());
 			}
-			if(x.getComments()!=null)
+			
+			if(x.getCommentsCount()!=null)
 			{
-				useless.setComments(x.getComments().getData().size());
+				useless.setComments(x.getCommentsCount());
 			}
+			
 			if(x.getPlace()!=null)
 			{
 				useless.setPlace(1);
-			}			
-			int hh=x.getUpdatedTime().getHours();
-			int mm=x.getUpdatedTime().getMinutes();
+			}		
+			
+			int hh,mm;
+			hh=x.getUpdatedTime().getHours();
+			mm=x.getUpdatedTime().getMinutes();
 			int time=hh*60+mm;
 			useless.setTime_of_day(time);
 			int s=0;
+			
 			if(x.getMessage()!=null)
 			{
 				s=x.getMessage().length();
 			}
+			
 			useless.setPost_length(s);
 			if(x.getMessageTags()!=null)
 			{
 				useless.setTags(x.getMessageTags().size());
 			}
+			
 			if(x.getPicture()!=null)
 			{
 				useless.setPicture(1);
 			}
+			
 			if(x.getSharesCount()!=null)
 			{
 				useless.setShares(x.getSharesCount());
 			}
+			
 			if(x.getWithTags()!=null)
 			{
 				useless.setWith_tags(x.getWithTags().size());
 			}
+			
 			useless.setNumber_of_friends(Number_of_friends);
+			
 			temp.add(useless);
 			i++;
 		}
@@ -195,13 +213,13 @@ public class LikePrediction {
 		System.out.println("Training complete!");
 	}
 
-	public static double Runner(String at)
+	public static void main(String[] args)
 	{
-//		Scanner in=new Scanner(System.in);
-//		String at="";
-//		System.out.println("Enter access token");
-//		at=in.nextLine();
-//		in.close();
+		Scanner in=new Scanner(System.in);
+		String at="";
+		System.out.println("Enter access token");
+		at=in.nextLine();
+		in.close();
 		facebookClient = new DefaultFacebookClient(at);
 		System.out.println("Hi, "+facebookClient.fetchObject("me", User.class).getName());
 		//Training predictor :
@@ -221,24 +239,27 @@ public class LikePrediction {
 			if(Math.round(pred[i][0])>Number_of_friends) pred[i][0]=Number_of_friends;
 //			System.out.println((int)pred[i][0]+"           "+(int)act[i][0]);
 			error+=((double)(Math.round(pred[i][0])-(int)act[i][0]))*((double)(Math.round(pred[i][0])-(int)act[i][0]));
-			if(pred[i][0]-act[i][0]>5 || pred[i][0]-act[i][0]<-5)
+			if(pred[i][0]-act[i][0]>10 || pred[i][0]-act[i][0]<-10)
 			{
 				count++;
 			}
 			System.out.println("Predicted likes : "+Math.round(pred[i][0]));
 			System.out.println("Actual likes : "+(int)act[i][0]);
-			System.out.println("Users most likely to like this post : ");
-			List<String> print_it=WhoWillLike.getTopK((int)pred[i][0]);
-			for(String jedi:print_it)
-			{
-				System.out.println(facebookClient.fetchObject(jedi, User.class).getName());
-			}
+//			if(Math.round(pred[i][0])>0)
+//			{
+//				System.out.println("Users most likely to like this post : ");
+//				List<String> print_it=WhoWillLike.getTopK((int)pred[i][0]);
+//				for(String jedi:print_it)
+//				{
+//					System.out.println(facebookClient.fetchObject(jedi, User.class).getName());
+//				}
+//			}
 			System.out.println("\n");
 		}
 		error/=n;
 		System.out.println("Error with margin of 5 likes " + (count*100/n)+"%");
 		System.out.println("Absolute Training error : "+error);
-		return error;
+//		return error;
 		//Hard coded training set as 100% of data
 	}
 }
