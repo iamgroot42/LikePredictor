@@ -221,7 +221,7 @@ public class LikePrediction {
 		System.out.println("Training complete!");
 	}
 
-	public static double Runner(String at)
+	public static Result Runner(String at)
 	{
 //		Scanner in=new Scanner(System.in);
 //		String at="";
@@ -241,18 +241,23 @@ public class LikePrediction {
 		n=Y_train.getRowDimension();
 		double error=0;
 		double count=0;
+		ArrayList<Long> predicted,actual;
+		predicted=new ArrayList<Long>();
+		actual=new ArrayList<Long>();
+		ArrayList<ArrayList<String>> likers=new ArrayList<ArrayList<String>>();
 		for(i=0;i<n;i++)
 		{
 			if(pred[i][0]<0) pred[i][0]=0;
 			if(Math.round(pred[i][0])>Number_of_friends) pred[i][0]=Number_of_friends;
-//			System.out.println((int)pred[i][0]+"           "+(int)act[i][0]);
 			error+=((double)(Math.round(pred[i][0])-(int)act[i][0]))*((double)(Math.round(pred[i][0])-(int)act[i][0]));
 			if(pred[i][0]-act[i][0]>10 || pred[i][0]-act[i][0]<-10)
 			{
 				count++;
 			}
-			System.out.println("Predicted likes : "+Math.round(pred[i][0]));
-			System.out.println("Actual likes : "+(int)act[i][0]);
+			predicted.add(Math.round(pred[i][0]));
+			actual.add((long)act[i][0]);
+			ArrayList<String> this_likers=new ArrayList<String>();
+			//Commented out for now : makes program too slow
 //			if(Math.round(pred[i][0])>0)
 //			{
 //				System.out.println("Users most likely to like this post : ");
@@ -262,12 +267,18 @@ public class LikePrediction {
 //					System.out.println(facebookClient.fetchObject(jedi, User.class).getName());
 //				}
 //			}
-			System.out.println("\n");
 		}
-		error/=n;
-		System.out.println("Error with margin of 10 likes " + (count*100/n)+"%");
-		System.out.println("Absolute Training error : "+error);
-		return error;
+		error/=2*n;
+		double relative_error=(count*100)/n;
+		
+		//Preparing return object
+		Result ret=new Result();
+		ret.setAbsolute_error(error);
+		ret.setPercentage_error(relative_error);
+		ret.setActual_likes(actual);
+		ret.setActual_likes(predicted);
+		ret.setLikers(likers);
+		return ret;
 		//Hard coded training set as 100% of data
 	}
 }

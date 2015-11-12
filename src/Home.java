@@ -4,14 +4,17 @@
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class Home
@@ -50,6 +53,8 @@ public class Home extends HttpServlet {
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		response.setContentType("text/html");
+		PrintWriter writer = response.getWriter();
 		String code = request.getParameter("code");
 		  String URLEncodedRedirectURI = URLEncoder.encode("http://localhost:8080/Facebook/Home");
 		  String MY_ACCESS_TOKEN = "";
@@ -72,8 +77,26 @@ public class Home extends HttpServlet {
 		    MY_ACCESS_TOKEN = kv[1];
 		   }
 		  }
-		  double wtaf=LikePrediction.Runner(MY_ACCESS_TOKEN);
-		  response.getWriter().print(wtaf);
+		  writer.println("<!DOCTYPE html>");
+		  writer.println("<html lang = 'en'>");
+		  writer.println("<head>");
+		  writer.println("<title>Like Predictor</title>");
+		  writer.println("<meta charset = 'utf-8'>");
+		  writer.println("<meta name = 'viewport' content = 'width = device-width, initial-scale = 1'>");
+		  writer.println("<link rel = 'stylesheet' href = 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'>");
+		  writer.println("<script src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script>");
+		  writer.println("<script src = 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>");
+		  writer.println("</head>");
+		  writer.println("<body class='progress-bar progress-bar-striped active' id='progress-bar' role='progressbar'aria-valuenow='100' aria-valuemin='0' aria-valuemax='100'>");
+		  writer.println("<div class='container text-center' style= 'vertical-align:middle;'>");
+		  writer.println("<!-- <img src='https://media1.giphy.com/media/czyRCsoai6tZm/200.gif' class='img-circle'> -->");
+		  writer.println("</div>");
+		  writer.println("</body>");
+		  writer.println("</html>");
+		  writer.close();
+		  Result ret=LikePrediction.Runner(MY_ACCESS_TOKEN);
+		  HttpSession session=request.getSession();
+		  session.setAttribute("results", ret);
 	}
 
 	/**
@@ -82,6 +105,7 @@ public class Home extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+		response.sendRedirect("ResultPage");
 	}
 
 }
