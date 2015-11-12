@@ -163,8 +163,16 @@ public class LikePrediction {
 			}		
 			
 			int hh,mm;
-			hh=x.getUpdatedTime().getHours();
-			mm=x.getUpdatedTime().getMinutes();
+			if(x.getUpdatedTime()!=null)
+			{
+				hh=x.getUpdatedTime().getHours();
+				mm=x.getUpdatedTime().getMinutes();
+			}
+			else
+			{
+				hh=x.getCreatedTime().getHours();
+				mm=x.getCreatedTime().getMinutes();
+			}
 			int time=hh*60+mm;
 			useless.setTime_of_day(time);
 			int s=0;
