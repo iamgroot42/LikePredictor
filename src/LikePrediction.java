@@ -213,13 +213,13 @@ public class LikePrediction {
 		System.out.println("Training complete!");
 	}
 
-	public static void main(String[] args)
+	public static double Runner(String at)
 	{
-		Scanner in=new Scanner(System.in);
-		String at="";
-		System.out.println("Enter access token");
-		at=in.nextLine();
-		in.close();
+//		Scanner in=new Scanner(System.in);
+//		String at="";
+//		System.out.println("Enter access token");
+//		at=in.nextLine();
+//		in.close();
 		facebookClient = new DefaultFacebookClient(at);
 		System.out.println("Hi, "+facebookClient.fetchObject("me", User.class).getName());
 		//Training predictor :
@@ -257,9 +257,9 @@ public class LikePrediction {
 			System.out.println("\n");
 		}
 		error/=n;
-		System.out.println("Error with margin of 5 likes " + (count*100/n)+"%");
+		System.out.println("Error with margin of 10 likes " + (count*100/n)+"%");
 		System.out.println("Absolute Training error : "+error);
-//		return error;
+		return error;
 		//Hard coded training set as 100% of data
 	}
 }

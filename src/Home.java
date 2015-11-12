@@ -72,7 +72,6 @@ public class Home extends HttpServlet {
 		    MY_ACCESS_TOKEN = kv[1];
 		   }
 		  }
-		  response.getWriter().print(MY_ACCESS_TOKEN);
 		  double wtaf=LikePrediction.Runner(MY_ACCESS_TOKEN);
 		  response.getWriter().print(wtaf);
 	}
