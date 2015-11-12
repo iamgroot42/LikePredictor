@@ -93,19 +93,21 @@ public class Home extends HttpServlet {
 		  writer.println("</div>");
 		  writer.println("</body>");
 		  writer.println("</html>");
-		  writer.close();
+		  writer.flush();
 		  Result ret=LikePrediction.Runner(MY_ACCESS_TOKEN);
 		  HttpSession session=request.getSession();
 		  session.setAttribute("results", ret);
+		  writer.println("<form action=\"ResultPage\">");
+		  writer.println("<button type=\"submit\" class=\"btn btn-success\"> Click Here </button>");
+		  writer.println("</form>");
+		  writer.close();
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-		response.sendRedirect("ResultPage");
+		// TODO Auto-generated method stud
 	}
 
 }
