@@ -57,7 +57,7 @@
                         <a class="page-scroll" href="#about">About</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#contact">Contact</a>
+                        <a class="page-scroll" href="#contact">Developers</a>
                     </li>
                 </ul>
             </div>
@@ -71,7 +71,7 @@
             <div class="header-content-inner">
                 <h1>Facebook Like Predictor</h1>
                 <hr>
-                <p>CSE201 course project</p>
+                <p>A simple Facebook like predictor,made as part of CSE201 course project</p>
                 <a href="https://graph.facebook.com/oauth/authorize?client_id=412912138911681&scope=email,user_friends,user_posts&redirect_uri=<%=URLEncoder.encode("http://localhost:8080/Facebook/Home")%>" class="btn btn-primary btn-xl page-scroll">Try it now</a>
             </div>
         </div>
@@ -83,7 +83,7 @@
                 <div class="col-lg-8 col-lg-offset-2 text-center">
                     <h2 class="section-heading">About the predictor</h2>
                     <hr class="light">
-                    <p class="text-faded">ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)ML + Probability :)</p>
+                    <p class="text-faded" >The app uses machine learning (<a href="https://en.wikipedia.org/wiki/Linear_regression" style=" color: white;"> linear regression</a>) to train on existing posts (features used described in project's <a href="https://github.com/iamgroot42/LikePredictor/blob/master/README.md" style=" color: white;">README</a> on GitHub) on the user's wall.Then, it uses the same posts to predict the number of likes it would most likely get.To predict the users likely to like a post, a frequency histogram is constructed.</p>
                     <a href="https://github.com/iamgroot42/LikePredictor" class="btn btn-default btn-xl">View source code</a>
                 </div>
             </div>
@@ -94,9 +94,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 text-center">
-                    <h2 class="section-heading">Buzz off :)</h2>
+                    <h2 class="section-heading">Developers</h2>
                     <hr class="primary">
-                    <p>Ready to start your next project with us? That's great! Give us a call or send us an email and we will get back to you as soon as possible!</p>
+                    <p>This project was made by two CS undergrads (sophomore), studying  at <a href="http://www.iiitd.ac.in/">IIITD</a> as part of our core course project (CSE201).<br>Liked the project? <br>Then star it on GitHub!</p>
                 </div>
                 <div class="col-lg-4 col-lg-offset-2 text-center">
                     <a href="https://github.com/iamgroot42">
