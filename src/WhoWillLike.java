@@ -13,22 +13,23 @@ import java.util.Set;
 import com.restfb.types.NamedFacebookType;
 
 public class WhoWillLike {
-	private static HashMap<String, Integer> mapping=new HashMap<String,Integer>();
+	private static HashMap<String, Long> mapping=new HashMap<String,Long>();
+	private static long total=0;
 	
 	public static List<String> getTopK(int k)
 	{
-		Set<Entry<String, Integer>> set = mapping.entrySet();
-        List<Entry<String, Integer>> list = new ArrayList<Entry<String, Integer>>(set);
-        Collections.sort( list, new Comparator<Map.Entry<String, Integer>>()
+		Set<Entry<String, Long>> set = mapping.entrySet();
+        List<Entry<String, Long>> list = new ArrayList<Entry<String, Long>>(set);
+        Collections.sort( list, new Comparator<Map.Entry<String, Long>>()
         {
-            public int compare( Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2 )
+            public int compare( Map.Entry<String, Long> o1, Map.Entry<String, Long> o2 )
             {
                 return (o2.getValue()).compareTo( o1.getValue() );
             }
         } );
         int i=0;
         List<String> ret=new ArrayList<String>();
-        for(Map.Entry<String, Integer> entry : list){
+        for(Map.Entry<String, Long> entry : list){
         	if(i>=k) break;
         	ret.add(entry.getKey());
         	i++;
@@ -38,7 +39,7 @@ public class WhoWillLike {
 	
 	public static void addLike(List<NamedFacebookType> x)
 	{
-		int n;
+		long n;
 		String mnm;
 		for(NamedFacebookType y : x)
 		{
@@ -49,18 +50,19 @@ public class WhoWillLike {
 			}
 			else
 			{
-				mapping.put(mnm, 1);
 				n=1;
+				mapping.put(mnm, n);
 			}
+			total++;
 			mapping.put(mnm,n+1);
 		}
 	}
-	
-	public static void printAll()
-	{
-		for(String x:mapping.keySet())
-		{
-			System.out.println(x+" : "+mapping.get(x));
-		}
+
+	public static long getTotal() {
+		return total;
 	}
+
+	public static HashMap<String, Long> getMapping() {
+		return mapping;
+	}	
 }
