@@ -34,13 +34,15 @@ public class ResultPage extends HttpServlet {
 		PrintWriter writer = response.getWriter();
 		HttpSession session=request.getSession();
 		Result ret=(Result)session.getAttribute("results");
+		session.invalidate();
 		writer.println("<html>");
 		writer.println("<body>");
 		writer.println("Dance karle beta !");
+		if(ret!=null)
+		{
+			writer.println("Training error : "+ret.getPercentage_error()+"%");
+		}
 		writer.println("</body>");
-		writer.println("<form type='POST'>");
-		writer.println("<button type='submit'> POTATO </button>");
-		writer.println("</form>");
 		writer.println("</html>");
 	}
 
