@@ -37,7 +37,7 @@ public class ResultPage extends HttpServlet {
 		PrintWriter writer = response.getWriter();
 		HttpSession session=request.getSession();
 		Result ret=(Result)session.getAttribute("results");
-		session.invalidate();
+//		session.invalidate();
 		writer.println("<html>");
 		writer.println("<head>");
 		writer.println("<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css\">");
