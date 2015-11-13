@@ -72,8 +72,10 @@ public class ResultPage extends HttpServlet {
 				}
 				writer.println("<div class=\"progress\">");
 				double yoda=(((double)mapping.get(iterator))/(double)tot)*(100.0);
-				writer.println("<div class=\"progress-bar progress-bar-"+type+"\" role=\"progressbar\" aria-valuenow=\""+yoda+"\"aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width:"+yoda+"%\">");
-				writer.println("ID of user "+iterator);
+				writer.println("<div class=\"progress-bar progress-bar-striped progress-bar-"+type+"\" role=\"progressbar\" aria-valuenow=\""+yoda+"\"aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width:"+yoda+"%\">");
+				writer.println("<span style='color:black; position:absolute; display:block; width: 100%;'>"); 
+				writer.println(iterator);
+				writer.println("</span>");
 				writer.println("</div>");
 				writer.println("</div>");
 				i++;
