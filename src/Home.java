@@ -93,7 +93,10 @@ public class Home extends HttpServlet {
 		  writer.println("</div>");
 		  writer.println("</body>");
 		  writer.println("</html>");
-		  writer.close();
+		  writer.flush();
+		  //writer.close();
+		  RequestDispatcher ob = request.getRequestDispatcher("/ResultPage");
+		  ob.include(request, response);
 		  Result ret=LikePrediction.Runner(MY_ACCESS_TOKEN);
 		  HttpSession session=request.getSession();
 		  session.setAttribute("results", ret);

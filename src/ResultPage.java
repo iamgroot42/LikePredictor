@@ -38,6 +38,9 @@ public class ResultPage extends HttpServlet {
 		writer.println("<body>");
 		writer.println("Dance karle beta !");
 		writer.println("</body>");
+		writer.println("<form type='POST'>");
+		writer.println("<button type='submit'> POTATO </button>");
+		writer.println("</form>");
 		writer.println("</html>");
 	}
 
