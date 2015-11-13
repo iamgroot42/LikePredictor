@@ -1,9 +1,10 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Result {
 	ArrayList<Long> predicted_likes; 
 	ArrayList<Long> actual_likes; 
-	ArrayList<ArrayList<String>> likers;
+	HashMap<String,String> likers;
 	double percentage_error;
 	double absolute_error;
 	public double getPercentage_error() {
@@ -30,10 +31,10 @@ public class Result {
 	public void setActual_likes(ArrayList<Long> actual_likes) {
 		this.actual_likes = actual_likes;
 	}
-	public ArrayList<ArrayList<String>> getLikers() {
+	public HashMap<String,String> getLikers() {
 		return likers;
 	}
-	public void setLikers(ArrayList<ArrayList<String>> likers) {
+	public void setLikers(HashMap<String,String> likers) {
 		this.likers = likers;
 	}
 }

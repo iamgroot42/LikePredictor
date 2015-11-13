@@ -48,11 +48,11 @@ public class ResultPage extends HttpServlet {
 		{
 //			writer.println("Training error : "+ret.getPercentage_error()+"%");
 			HashMap<String,Long> mapping=WhoWillLike.getMapping();
-			List<String> iterate=WhoWillLike.getTopK(10);
+			HashMap<String,String> iterate=ret.getLikers();
 			long tot=WhoWillLike.getTotal();
 			int i=0;
 			String type;
-			for(String iterator:iterate)
+			for(String iterator : iterate.keySet())
 			{
 				if(i%4==0)
 				{
@@ -74,7 +74,7 @@ public class ResultPage extends HttpServlet {
 				double yoda=(((double)mapping.get(iterator))/(double)tot)*(100.0);
 				writer.println("<div class=\"progress-bar progress-bar-striped progress-bar-"+type+"\" role=\"progressbar\" aria-valuenow=\""+yoda+"\"aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width:"+yoda+"%\">");
 				writer.println("<span style='color:black; position:absolute; display:block; width: 100%;'>"); 
-				writer.println(iterator);
+				writer.println(iterate.get(iterator));
 				writer.println("</span>");
 				writer.println("</div>");
 				writer.println("</div>");

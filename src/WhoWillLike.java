@@ -15,11 +15,12 @@ import com.restfb.types.NamedFacebookType;
 public class WhoWillLike {
 	private static HashMap<String, Long> mapping=new HashMap<String,Long>();
 	private static long total=0;
+	private static List<Entry<String, Long>> list;
 	
-	public static List<String> getTopK(int k)
+	public static void sortIt()
 	{
 		Set<Entry<String, Long>> set = mapping.entrySet();
-        List<Entry<String, Long>> list = new ArrayList<Entry<String, Long>>(set);
+		list = new ArrayList<Entry<String, Long>>(set);
         Collections.sort( list, new Comparator<Map.Entry<String, Long>>()
         {
             public int compare( Map.Entry<String, Long> o1, Map.Entry<String, Long> o2 )
@@ -27,14 +28,6 @@ public class WhoWillLike {
                 return (o2.getValue()).compareTo( o1.getValue() );
             }
         } );
-        int i=0;
-        List<String> ret=new ArrayList<String>();
-        for(Map.Entry<String, Long> entry : list){
-        	if(i>=k) break;
-        	ret.add(entry.getKey());
-        	i++;
-        }
-        return ret;
 	}
 	
 	public static void addLike(List<NamedFacebookType> x)
@@ -57,7 +50,7 @@ public class WhoWillLike {
 			mapping.put(mnm,n+1);
 		}
 	}
-
+	
 	public static long getTotal() {
 		return total;
 	}

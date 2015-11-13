@@ -2,6 +2,7 @@
 //@author : Satyam Kumar - 2014096
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -204,7 +205,6 @@ public class LikePrediction {
 			}
 			
 			useless.setNumber_of_friends(Number_of_friends);
-			
 			temp.add(useless);
 			i++;
 		}
@@ -244,7 +244,9 @@ public class LikePrediction {
 		ArrayList<Long> predicted,actual;
 		predicted=new ArrayList<Long>();
 		actual=new ArrayList<Long>();
-		ArrayList<ArrayList<String>> likers=new ArrayList<ArrayList<String>>();
+		HashMap<String,Long> likers;
+		//Sort histogram
+		WhoWillLike.sortIt();
 		for(i=0;i<n;i++)
 		{
 			if(pred[i][0]<0) pred[i][0]=0;
@@ -257,27 +259,25 @@ public class LikePrediction {
 			predicted.add(Math.round(pred[i][0]));
 			actual.add((long)act[i][0]);
 			ArrayList<String> this_likers=new ArrayList<String>();
-			//Commented out for now : makes program too slow
-//			if(Math.round(pred[i][0])>0)
-//			{
-//				System.out.println("Users most likely to like this post : ");
-//				List<String> print_it=WhoWillLike.getTopK((int)pred[i][0]);
-//				for(String jedi:print_it)
-//				{
-//					System.out.println(facebookClient.fetchObject(jedi, User.class).getName());
-//				}
-//			}
+			//Limiting factor in terms of speed :
 		}
 		error/=2*n;
 		double relative_error=(count*100)/n;
-		
+		likers=WhoWillLike.getMapping();
+		HashMap<String,String> people=new HashMap<String,String>();	
+		String naam="";
+		for(String y:likers.keySet())
+		{
+			naam=facebookClient.fetchObject(y, User.class).getName();
+			people.put(y, naam);
+		}
 		//Preparing return object
 		Result ret=new Result();
 		ret.setAbsolute_error(error);
 		ret.setPercentage_error(relative_error);
 		ret.setActual_likes(actual);
 		ret.setActual_likes(predicted);
-		ret.setLikers(likers);
+		ret.setLikers(people);
 		return ret;
 		//Hard coded training set as 100% of data
 	}
