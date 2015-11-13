@@ -86,6 +86,11 @@ public class ResultPage extends HttpServlet {
 			writer.println("<br>");
 			ArrayList<Long> actual=ret.getActual_likes();
 			ArrayList<Long> predicted=ret.getPredicted_likes();
+			for(String x:ret.getPost_links())
+			{
+				writer.println("<a href=\""+x+"\">Click here to view post</a>");
+				writer.println("<br>");
+			}
 //			writer.println("Actual"+"          "+"Predicted");
 //			for(int i=0;i<actual.size();++i)
 //			{

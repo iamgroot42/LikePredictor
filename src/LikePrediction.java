@@ -32,6 +32,7 @@ public class LikePrediction {
 	private static Matrix Theta;
 	private static long Number_of_friends;
 	private static FacebookClient facebookClient;
+	private static ArrayList<String> links; 
 	//Inverse Code Starts
 	public static void updateMacheps() {
 	  MACHEPS = 1;
@@ -135,8 +136,10 @@ public class LikePrediction {
 		//Array of features:
 		ArrayList<Double> why=new ArrayList<Double>();
 		int i=0;
+		links=new ArrayList<String>();
 		for(Post x:statuses)
 		{
+			links.add("https://www.facebook.com/"+x.getId());
 			FVector useless=new FVector();
 			if(x.getLikesCount()!=null)
 			{
@@ -245,8 +248,6 @@ public class LikePrediction {
 		predicted=new ArrayList<Long>();
 		actual=new ArrayList<Long>();
 		HashMap<String,Long> likers;
-		//Sort histogram
-		WhoWillLike.sortIt();
 		for(i=0;i<n;i++)
 		{
 			if(pred[i][0]<0) pred[i][0]=0;
@@ -261,6 +262,8 @@ public class LikePrediction {
 			ArrayList<String> this_likers=new ArrayList<String>();
 			//Limiting factor in terms of speed :
 		}
+		//Sort histogram
+		WhoWillLike.sortIt();
 		error/=2*n;
 		double relative_error=(count*100)/n;
 		likers=WhoWillLike.getMapping();
@@ -278,7 +281,9 @@ public class LikePrediction {
 		ret.setActual_likes(actual);
 		ret.setActual_likes(predicted);
 		ret.setLikers(people);
+		ret.setPost_links(links);
 		return ret;
 		//Hard coded training set as 100% of data
 	}
+
 }

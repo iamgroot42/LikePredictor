@@ -28,6 +28,12 @@ public class WhoWillLike {
                 return (o2.getValue()).compareTo( o1.getValue() );
             }
         } );
+        HashMap<String,Long> mapping2=new HashMap<String,Long>();
+        for(Map.Entry<String, Long> x:list)
+        {
+        	mapping2.put(x.getKey(), x.getValue());
+        }
+        mapping=mapping2;
 	}
 	
 	public static void addLike(List<NamedFacebookType> x)

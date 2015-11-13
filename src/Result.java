@@ -4,6 +4,13 @@ import java.util.HashMap;
 public class Result {
 	ArrayList<Long> predicted_likes; 
 	ArrayList<Long> actual_likes; 
+	ArrayList<String> post_links;
+	public ArrayList<String> getPost_links() {
+		return post_links;
+	}
+	public void setPost_links(ArrayList<String> post_links) {
+		this.post_links = post_links;
+	}
 	HashMap<String,String> likers;
 	double percentage_error;
 	double absolute_error;
