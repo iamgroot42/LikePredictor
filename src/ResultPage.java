@@ -70,12 +70,14 @@ public class ResultPage extends HttpServlet {
 				{
 					type="danger";
 				}
-				writer.println("<div class=\"progress\">");
+				writer.println("<div class='container' style='margin-left:0%'>");
+				writer.println("<div class=\"progress\" style='margin-bottom:0.2%'>");
 				double yoda=(((double)mapping.get(iterator))/(double)tot)*(100.0);
 				writer.println("<div class=\"progress-bar progress-bar-striped progress-bar-"+type+"\" role=\"progressbar\" aria-valuenow=\""+yoda+"\"aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width:"+yoda+"%\">");
 				writer.println("<span style='color:black; position:absolute; display:block; width: 100%;'>"); 
 				writer.println(iterate.get(iterator));
 				writer.println("</span>");
+				writer.println("</div>");
 				writer.println("</div>");
 				writer.println("</div>");
 				i++;
@@ -86,10 +88,24 @@ public class ResultPage extends HttpServlet {
 			writer.println("<br>");
 			ArrayList<Long> actual=ret.getActual_likes();
 			ArrayList<Long> predicted=ret.getPredicted_likes();
+			int j = 0, k;
+			long end;
 			for(String x:ret.getPost_links())
 			{
-				writer.println("<a href=\""+x+"\">Click here to view post</a>");
 				writer.println("<br>");
+				writer.println("<a href=\""+x+"\">Click here to view post</a>");
+				writer.println("Actual Likes : " + actual.get(j) /*+ "; Predicted Likes : " + predicted.get(j)*/);
+				writer.print("Likers : ");
+				//end = predicted.get(j); k = 0;
+				end = actual.get(j); k = 0;
+				for(String str : mapping.keySet()) {
+					if(k++ == actual.get(j)) break;
+					writer.print(iterate.get(str));
+					if(k != end) writer.print(", ");
+				}
+				writer.println("<br>");
+				writer.println("<br>");
+				j++;
 			}
 //			writer.println("Actual"+"          "+"Predicted");
 //			for(int i=0;i<actual.size();++i)
