@@ -13,6 +13,13 @@ public class FVector {
 	private long shares;
 	private long with_tags;
 	private long number_of_friends;
+	private String link;
+	public String getLink() {
+		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
+	}
 	public FVector()
 	{
 		offset=1;

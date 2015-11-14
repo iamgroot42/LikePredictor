@@ -43,4 +43,14 @@ public class Shuffle2DArray {
 		}
 		return ret.clone();
 	}
+	
+	public static ArrayList<String> shuffleLinks(ArrayList<String> X)
+	{
+		ArrayList<String> ret=new ArrayList<String>();
+		for(Integer x:shuf)
+		{
+			ret.add(X.get(x));
+		}
+		return ret;
+	}
 }

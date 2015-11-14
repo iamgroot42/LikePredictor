@@ -107,11 +107,6 @@ public class ResultPage extends HttpServlet {
 				writer.println("<br>");
 				j++;
 			}
-//			writer.println("Actual"+"          "+"Predicted");
-//			for(int i=0;i<actual.size();++i)
-//			{
-//				writer.println(actual.get(i)+"          "+predicted.get(i));
-//			}
 		}
 		writer.println("</body>");
 		writer.println("</html>");

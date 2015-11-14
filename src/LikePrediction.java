@@ -3,6 +3,7 @@
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -137,9 +138,10 @@ public class LikePrediction {
 		ArrayList<Double> why=new ArrayList<Double>();
 		int i=0;
 		links=new ArrayList<String>();
+		ArrayList<String> pseudo_links=new ArrayList<String>();
 		for(Post x:statuses)
 		{
-			links.add("https://www.facebook.com/"+x.getId());
+			pseudo_links.add("https://www.facebook.com/"+x.getId());
 			FVector useless=new FVector();
 			if(x.getLikesCount()!=null)
 			{
@@ -215,7 +217,9 @@ public class LikePrediction {
 		setXandTest(temp);
 		//Constructing vector 'Y'
 		constructY(why);
-				
+		//Maintain 1-1 mapping in link IDs
+		links=Shuffle2DArray.shuffleLinks(pseudo_links);
+		
 		Matrix X_transpose=X_train.transpose();
 		Matrix sampletin=X_transpose.times(X_train);
 		Matrix sampletinv=pinv(sampletin);
@@ -235,7 +239,6 @@ public class LikePrediction {
 		System.out.println("Hi, "+facebookClient.fetchObject("me", User.class).getName());
 		//Training predictor :
 		Train();
-		//prediction.print(3, 2);
 		Matrix prediction=X_train.times(Theta);
 		double[][] pred,act;
 		pred=prediction.getArray();
@@ -247,7 +250,7 @@ public class LikePrediction {
 		ArrayList<Long> predicted,actual;
 		predicted=new ArrayList<Long>();
 		actual=new ArrayList<Long>();
-		HashMap<String,Long> likers;
+		LinkedHashMap<String,Long> likers;
 		for(i=0;i<n;i++)
 		{
 			if(pred[i][0]<0) pred[i][0]=0;
@@ -259,15 +262,13 @@ public class LikePrediction {
 			}
 			predicted.add(Math.round(pred[i][0]));
 			actual.add((long)act[i][0]);
-			ArrayList<String> this_likers=new ArrayList<String>();
-			//Limiting factor in terms of speed :
 		}
 		//Sort histogram
 		WhoWillLike.sortIt();
 		error/=2*n;
 		double relative_error=(count*100)/n;
 		likers=WhoWillLike.getMapping();
-		HashMap<String,String> people=new HashMap<String,String>();	
+		LinkedHashMap<String,String> people=new LinkedHashMap<String,String>();	
 		String naam="";
 		for(String y:likers.keySet())
 		{
@@ -279,11 +280,10 @@ public class LikePrediction {
 		ret.setAbsolute_error(error);
 		ret.setPercentage_error(relative_error);
 		ret.setActual_likes(actual);
-		ret.setActual_likes(predicted);
+		ret.setPredicted_likes(predicted);
 		ret.setLikers(people);
 		ret.setPost_links(links);
 		return ret;
 		//Hard coded training set as 100% of data
 	}
-
 }
