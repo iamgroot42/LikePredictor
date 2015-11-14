@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,7 +14,7 @@ import java.util.Set;
 import com.restfb.types.NamedFacebookType;
 
 public class WhoWillLike {
-	private static HashMap<String, Long> mapping=new HashMap<String,Long>();
+	private static LinkedHashMap<String,Long> mapping = new LinkedHashMap<String,Long>();
 	private static long total=0;
 	private static List<Entry<String, Long>> list;
 	
@@ -28,12 +29,12 @@ public class WhoWillLike {
                 return (o2.getValue()).compareTo( o1.getValue() );
             }
         } );
-        HashMap<String,Long> mapping2=new HashMap<String,Long>();
+        mapping.clear();
         for(Map.Entry<String, Long> x:list)
         {
-        	mapping2.put(x.getKey(), x.getValue());
+        	mapping.put(x.getKey(), x.getValue());
         }
-        mapping=mapping2;
+        //Order of mapping correct (as of now)
 	}
 	
 	public static void addLike(List<NamedFacebookType> x)
@@ -61,7 +62,7 @@ public class WhoWillLike {
 		return total;
 	}
 
-	public static HashMap<String, Long> getMapping() {
+	public static LinkedHashMap<String, Long> getMapping() {
 		return mapping;
 	}	
 }

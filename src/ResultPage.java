@@ -109,6 +109,8 @@ public class ResultPage extends HttpServlet {
 				writer.println("</div>");
 				i++;
 			}
+			writer.println("<br>");
+			writer.println("<br>");
 			writer.println("Absolute training error : "+ret.getAbsolute_error());
 			writer.println("<br>");
 			writer.println("Percentage training error : "+ret.getPercentage_error());
@@ -131,31 +133,15 @@ public class ResultPage extends HttpServlet {
 						writer.println("</div>");
 						writer.println("<div class='panel-body'>");
 							writer.println("<div class='list-group'>");
-								writer.println("<p class='list-group-item'>Number of Predicted Likes :</p>");
-								writer.println("<p class='list-group-item'>Number of Actual Likes :</p>");
+								writer.println("<p class='list-group-item'>Number of Predicted Likes : " + actual.get(j) +"</p>");
+								writer.println("<p class='list-group-item'>Number of Actual Likes : " + predicted.get(j) +"</p>");
 							writer.println("</div>");
 						writer.println("</div>");
 					writer.println("</div>");
 				writer.println("</div>");
-				//writer.println("<a href=\""+x+"\">Click here to view post</a>");
-//				writer.println("Actual Likes : " + actual.get(j) /*+ "; Predicted Likes : " + predicted.get(j)*/);
-//				writer.print("Likers : ");
-//				//end = predicted.get(j); k = 0;
-//				end = actual.get(j); k = 0;
-//				for(String str : mapping.keySet()) {
-//					if(k++ == actual.get(j)) break;
-//					writer.print(iterate.get(str));
-//					if(k != end) writer.print(", ");
-//				}
-//				writer.println("<br>");
-//				writer.println("<br>");
-//				j++;
+//				writer.print("PredLikers : ");
+				j++;
 			}
-			//			writer.println("Actual"+"          "+"Predicted");
-			//			for(int i=0;i<actual.size();++i)
-			//			{
-			//				writer.println(actual.get(i)+"          "+predicted.get(i));
-			//			}
 		}
 		writer.println("</div>");
 		writer.println("</div>");
