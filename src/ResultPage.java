@@ -82,6 +82,8 @@ public class ResultPage extends HttpServlet {
 				writer.println("</div>");
 				i++;
 			}
+			writer.println("<br>");
+			writer.println("<br>");
 			writer.println("Absolute training error : "+ret.getAbsolute_error());
 			writer.println("<br>");
 			writer.println("Percentage training error : "+ret.getPercentage_error());
@@ -93,17 +95,17 @@ public class ResultPage extends HttpServlet {
 			for(String x:ret.getPost_links())
 			{
 				writer.println("<br>");
-				writer.println("<a href=\""+x+"\">Click here to view post</a>");
-				writer.println("Actual Likes : " + actual.get(j) /*+ "; Predicted Likes : " + predicted.get(j)*/);
-				writer.print("Likers : ");
-				//end = predicted.get(j); k = 0;
-				end = actual.get(j); k = 0;
-				for(String str : mapping.keySet()) {
-					if(k++ == actual.get(j)) break;
-					writer.print(iterate.get(str));
-					if(k != end) writer.print(", ");
-				}
-				writer.println("<br>");
+				writer.println("<a href=\""+x+"\">View Post</a> <br>");
+				writer.println("Actual Likes : " + actual.get(j)+"<br>");
+				writer.println("Predicted Likes : " + predicted.get(j)+"<br>");
+//				writer.print("PredLikers : ");
+//				//end = predicted.get(j); k = 0;
+//				end = actual.get(j); k = 0;
+//				for(String str : mapping.keySet()) {
+//					if(k++ == actual.get(j)) break;
+//					writer.print(iterate.get(str));
+//					if(k != end) writer.print(", ");
+//				}
 				writer.println("<br>");
 				j++;
 			}
