@@ -127,10 +127,18 @@ public class ResultPage extends HttpServlet {
 				writer.println("<div class='panel panel-default'>");
 				writer.println("<div class='panel-heading'>");
 				writer.println("<form action='" + x + "'>");
-				writer.println("<button class='btn btn-primary pull-right' type='submit'>&nbsp; Try Me! &nbsp</button>");
+				writer.println("<button class='btn btn-primary pull-right' type='submit'>&nbsp; View Post &nbsp</button>");
 				writer.println("</form>");    
-				writer.println("<h4>");
-				writer.println("Click Button to View Post");
+				if(-5 < predicted.get(j)-actual.get(j) & predicted.get(j)-actual.get(j)<5)
+				{
+					writer.println("<h4 style=\"color:green\">");
+					writer.println("Correct prediction");
+				}
+				else
+				{
+					writer.println("<h4 style=\"color:red\">");
+					writer.println("Inorrect prediction");
+				}
 				writer.println("</h4>");
 				writer.println("</div>");
 				writer.println("<div class='panel-body'>");
@@ -155,7 +163,7 @@ public class ResultPage extends HttpServlet {
 		}
 		catch(Exception e)
 		{
-			writer.println("Fraud hua beta,fraud");
+			writer.println("Boop.");
 		}
 	}
 
