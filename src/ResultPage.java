@@ -88,34 +88,34 @@ public class ResultPage extends HttpServlet {
 			writer.println("<link href='css/styles.css' rel='stylesheet'>");
 			writer.println("</head>");
 			writer.println("<body>");
-//			writer.println("<div class='padding'>");
-//			writer.println("<div class='row well'>");
-//				writer.println("<div class='col-sm-12'>");
-//					writer.println("<div class='panel panel-default'>");
-//							writer.println("<div class='panel-body'>");
-//								writer.println("<h class='lead'>");
-//									writer.println("<center>");
-//										writer.println(" Results!");
-//									writer.println(" </center>");
-//								writer.println("</h>");
-//								writer.println("<p><center>");
-//									writer.println("<img src='https://lh3.googleusercontent.com/uFp_tsTJboUY7kue5XAsGA=s28' width='28px' height='28px'>");
-//								writer.println("</center></p>");
-//							writer.println("</div>");
-//					writer.println("</div>");
-//				writer.println("</div>");
-//			writer.println("</div>");
-//		writer.println("</div>");
-//			writer.println("Absolute training error : "+ret.getAbsolute_error());
-//			writer.println("<br>");
-//			writer.println("Percentage training error : "+ret.getPercentage_error());
-//			writer.println("<br>");
+			//			writer.println("<div class='padding'>");
+			//			writer.println("<div class='row well'>");
+			//				writer.println("<div class='col-sm-12'>");
+			//					writer.println("<div class='panel panel-default'>");
+			//							writer.println("<div class='panel-body'>");
+			//								writer.println("<h class='lead'>");
+			//									writer.println("<center>");
+			//										writer.println(" Results!");
+			//									writer.println(" </center>");
+			//								writer.println("</h>");
+			//								writer.println("<p><center>");
+			//									writer.println("<img src='https://lh3.googleusercontent.com/uFp_tsTJboUY7kue5XAsGA=s28' width='28px' height='28px'>");
+			//								writer.println("</center></p>");
+			//							writer.println("</div>");
+			//					writer.println("</div>");
+			//				writer.println("</div>");
+			//			writer.println("</div>");
+			//		writer.println("</div>");
+			//			writer.println("Absolute training error : "+ret.getAbsolute_error());
+			//			writer.println("<br>");
+			//			writer.println("Percentage training error : "+ret.getPercentage_error());
+			//			writer.println("<br>");
 			ArrayList<Long> actual=ret.getActual_likes();
 			ArrayList<Long> predicted=ret.getPredicted_likes();
-			
+
 			//Render chart :
 			writer.println(" <div id=\"chart_div\"></div>");
-			
+
 			writer.println("<div class='column col-sm-12 col-xs-11' id='main'>");
 			writer.println("<div class='padding'>");
 			writer.println("<div class='row well'>");
@@ -124,31 +124,34 @@ public class ResultPage extends HttpServlet {
 			for(String x:ret.getPost_links())
 			{
 				writer.println("<div class='col-sm-6'>");
-					writer.println("<div class='panel panel-default'>");
-						writer.println("<div class='panel-heading'>");
-							writer.println("<h4>");
-								writer.println("<a href='" + x + "'>Link to Post</a>");
-							writer.println("</h4>");
-						writer.println("</div>");
-						writer.println("<div class='panel-body'>");
-							writer.println("<div class='list-group'>");
-								writer.println("<p class='list-group-item'>Predicted Likes : " + predicted.get(j) +"</p>");
-								writer.println("<p class='list-group-item'>Actual Likes : " + actual.get(j) +"</p>");
-							writer.println("</div>");
-						writer.println("</div>");
-					writer.println("</div>");
+				writer.println("<div class='panel panel-default'>");
+				writer.println("<div class='panel-heading'>");
+				writer.println("<form action='" + x + "'>");
+				writer.println("<button class='btn btn-primary pull-right' type='submit'>&nbsp; Try Me! &nbsp</button>");
+				writer.println("</form>");    
+				writer.println("<h4>");
+				writer.println("Click Button to View Post");
+				writer.println("</h4>");
 				writer.println("</div>");
-//				writer.print("PredLikers : ");
+				writer.println("<div class='panel-body'>");
+				writer.println("<div class='list-group'>");
+				writer.println("<p class='list-group-item'>Number of Predicted Likes : " + predicted.get(j) +"</p>");
+				writer.println("<p class='list-group-item'>Number of Actual Likes : " + actual.get(j) +"</p>");
+				writer.println("</div>");
+				writer.println("</div>");
+				writer.println("</div>");
+				writer.println("</div>");
+				//				writer.print("PredLikers : ");
 				j++;
 			}
-		writer.println("</div>");
-		writer.println("</div>");
-		writer.println("</div>");
-		writer.println("<script src='//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js'></script>");
-		writer.println("<script src='js/bootstrap.min.js'></script>");
-		writer.println("<script src='js/scripts.js'></script>");
-		writer.println("</body>");
-		writer.println("</html>");
+			writer.println("</div>");
+			writer.println("</div>");
+			writer.println("</div>");
+			writer.println("<script src='//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js'></script>");
+			writer.println("<script src='js/bootstrap.min.js'></script>");
+			writer.println("<script src='js/scripts.js'></script>");
+			writer.println("</body>");
+			writer.println("</html>");
 		}
 		catch(Exception e)
 		{
