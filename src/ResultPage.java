@@ -108,6 +108,7 @@ public class ResultPage extends HttpServlet {
 			}
 			writer.print("]);");
 			writer.print("var options = {");
+			writer.print("hAxis: { textPosition: 'none' },");
 			writer.print("title: 'Actual v/s Prediction',");
 			writer.print("curveType: 'function',");
 			writer.print("legend: { position: 'bottom' }");

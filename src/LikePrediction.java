@@ -129,7 +129,7 @@ public class LikePrediction {
 			Post post = facebookClient.fetchObject(idee,
 					  Post.class,
 					  Parameter.with("fields", "likes.summary(true),comments.summary(true),type,with_tags,updated_time,shares,place,picture,message_tags,message,link"));
-			System.out.println(post.getType());
+//			System.out.println(post.getType());
 			statuses.add(post);
 		}
 		Number_of_friends=facebookClient.fetchConnection("me/friends",User.class).getTotalCount();
@@ -236,7 +236,7 @@ public class LikePrediction {
 //		at=in.nextLine();
 //		in.close();
 		facebookClient = new DefaultFacebookClient(at);
-		System.out.println("Hi, "+facebookClient.fetchObject("me", User.class).getName());
+//		System.out.println("Hi, "+facebookClient.fetchObject("me", User.class).getName());
 		//Training predictor :
 		Train();
 		Matrix prediction=X_train.times(Theta);
@@ -265,16 +265,22 @@ public class LikePrediction {
 		}
 		//Sort histogram
 		WhoWillLike.sortIt();
+		System.out.println("Sorting complete!");
 		error/=2*n;
 		double relative_error=(count*100)/n;
 		likers=WhoWillLike.getMapping();
 		LinkedHashMap<String,String> people=new LinkedHashMap<String,String>();	
 		String naam="";
+		int ex=0;
+		//Limiting factor (in terms of speed) :
 		for(String y:likers.keySet())
 		{
+			if(ex>=10) break;
 			naam=facebookClient.fetchObject(y, User.class).getName();
 			people.put(y, naam);
+			ex++;
 		}
+		System.out.println("Fetching complete!");
 		//Preparing return object
 		Result ret=new Result();
 		ret.setAbsolute_error(error);
@@ -283,6 +289,7 @@ public class LikePrediction {
 		ret.setPredicted_likes(predicted);
 		ret.setLikers(people);
 		ret.setPost_links(links);
+		System.out.println("Ready to display!");
 		return ret;
 		//Hard coded training set as 100% of data
 	}
