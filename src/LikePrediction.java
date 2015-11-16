@@ -93,28 +93,36 @@ public class LikePrediction {
 		Matrix chloro;
 		int i,n,s;
 		n=x.size();
-		double[][] ret=new double[n][11]; //Hard coding for now
+		double[][] ret=new double[n][11+8]; //Hard coding for now
 		double real_deal[][];
 		for(i=0;i<n;i++)
 		{
 			ret[i][0]=x.get(i).getOffset();
 			ret[i][1]=x.get(i).getAttachments();
-			ret[i][2]=x.get(i).getComments();
-			ret[i][3]=x.get(i).getPlace();
-			ret[i][4]=x.get(i).getTime_of_day();
-			ret[i][5]=x.get(i).getPost_length();
-			ret[i][6]=x.get(i).getTags();
-			ret[i][7]=x.get(i).getPicture();
-			ret[i][8]=x.get(i).getShares();
-			ret[i][9]=x.get(i).getWith_tags();
-			ret[i][10]=x.get(i).getNumber_of_friends();
+			ret[i][2]=x.get(i).getAttachmentsSQ();
+			ret[i][3]=x.get(i).getComments();
+			ret[i][4]=x.get(i).getCommentsSQ();
+			ret[i][5]=x.get(i).getPlace();
+			ret[i][6]=x.get(i).getTime_of_day();
+			ret[i][7]=x.get(i).getTime_of_daySQ();
+			ret[i][8]=x.get(i).getPost_length();
+			ret[i][9]=x.get(i).getPost_lengthSQ();
+			ret[i][10]=x.get(i).getTags();
+			ret[i][11]=x.get(i).getTagsSQ();
+			ret[i][12]=x.get(i).getPicture();
+			ret[i][13]=x.get(i).getShares();
+			ret[i][14]=x.get(i).getSharesSQ();
+			ret[i][15]=x.get(i).getWith_tags();
+			ret[i][16]=x.get(i).getWith_tagsSQ();
+			ret[i][17]=x.get(i).getNumber_of_friends();
+			ret[i][18]=x.get(i).getNumber_of_friendsSQ();
 		}
 		//Shuffling array to remove any bias
 		real_deal=Shuffle2DArray.shuffleX(ret,n);
 		s=(6*n)/10;
 		s=n-1; //change later
 		chloro=new Matrix(real_deal);
-		X_train=chloro.getMatrix(0,s,0,10); //60% 
+		X_train=chloro.getMatrix(0,s,0,10+8); //60% 
 //		X_test=chloro.getMatrix(s+1,n-1,0,10); //40%
 	}
 	
@@ -155,12 +163,16 @@ public class LikePrediction {
 			//Remove this feature :
 			if(x.getAttachments()!=null)
 			{
-				useless.setAttachments(x.getAttachments().getData().size());
+				long waifu=x.getAttachments().getData().size();
+				useless.setAttachments(waifu);
+				useless.setAttachmentsSQ(waifu*waifu);
 			}
 			
 			if(x.getCommentsCount()!=null)
 			{
-				useless.setComments(x.getCommentsCount());
+				long waifu=x.getCommentsCount();
+				useless.setComments(waifu);
+				useless.setCommentsSQ(waifu*waifu);
 			}
 			
 			if(x.getPlace()!=null)
@@ -181,17 +193,21 @@ public class LikePrediction {
 			}
 			int time=hh*60+mm;
 			useless.setTime_of_day(time);
-			int s=0;
+			useless.setTime_of_daySQ(time*time);
 			
+			int s=0;
 			if(x.getMessage()!=null)
 			{
 				s=x.getMessage().length();
 			}
 			
 			useless.setPost_length(s);
+			useless.setPost_lengthSQ(s*s);
 			if(x.getMessageTags()!=null)
 			{
-				useless.setTags(x.getMessageTags().size());
+				long waifu=x.getMessageTags().size();
+				useless.setTags(waifu);
+				useless.setTagsSQ(waifu*waifu);
 			}
 			
 			if(x.getPicture()!=null)
@@ -201,15 +217,20 @@ public class LikePrediction {
 			
 			if(x.getSharesCount()!=null)
 			{
-				useless.setShares(x.getSharesCount());
+				long waifu=x.getSharesCount();
+				useless.setShares(waifu);
+				useless.setSharesSQ(waifu*waifu);
 			}
 			
 			if(x.getWithTags()!=null)
 			{
-				useless.setWith_tags(x.getWithTags().size());
+				long waifu=x.getWithTags().size();
+				useless.setWith_tags(waifu);
+				useless.setWith_tagsSQ(waifu*waifu);
 			}
 			
 			useless.setNumber_of_friends(Number_of_friends);
+			useless.setNumber_of_friendsSQ(Number_of_friends*Number_of_friends);
 			temp.add(useless);
 			i++;
 		}
@@ -290,7 +311,7 @@ public class LikePrediction {
 		ret.setLikers(people);
 		ret.setPost_links(links);
 		System.out.println("Ready to display!");
-		System.out.println("Prediction error : "+((double)count/(double)n)+"%");
+		System.out.println("Prediction error : "+(100.0*((double)count/(double)n))+"%");
 		return ret;
 		//Hard coded training set as 100% of data
 	}
