@@ -85,7 +85,7 @@ public class LikePrediction {
 		c=(6*size)/10;
 		c=size-1; //change later
 		Y_train=chloro.getMatrix(0,c,0,0); //60%
-//		Y_test=chloro.getMatrix(c+1,size-1,0,0); //40%
+	  //Y_test=chloro.getMatrix(c+1,size-1,0,0); //40%
 	}
 	
 	private static void setXandTest(ArrayList<FVector> x)
@@ -290,6 +290,7 @@ public class LikePrediction {
 		ret.setLikers(people);
 		ret.setPost_links(links);
 		System.out.println("Ready to display!");
+		System.out.println("Prediction error : "+((double)count/(double)n)+"%");
 		return ret;
 		//Hard coded training set as 100% of data
 	}
