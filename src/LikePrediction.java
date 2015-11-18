@@ -2,17 +2,12 @@
 //@author : Satyam Kumar - 2014096
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Scanner;
 
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
-import com.restfb.types.Likes;
-import com.restfb.types.NamedFacebookType;
 import com.restfb.types.Post;
 import com.restfb.types.User;
 
@@ -23,7 +18,6 @@ public class LikePrediction {
 
 	//Code for calculating pseudo-inverse (for non-invertible matrices) using SVD taken from
 	// http://the-lost-beauty.blogspot.in/2009/04/moore-penrose-pseudoinverse-in-jama.html
-	// Please don't consider the following segment while checking for plagiarism 
 	
 	public static double MACHEPS = 2E-16;
 	private static Matrix X_train;
@@ -83,9 +77,9 @@ public class LikePrediction {
 		double real_deal[][]=Shuffle2DArray.shuffleY(rekt, size); 
 		Matrix chloro=new Matrix(real_deal);
 		c=(6*size)/10;
-		c=size-1; //change later
-		Y_train=chloro.getMatrix(0,c,0,0); //60%
-	  //Y_test=chloro.getMatrix(c+1,size-1,0,0); //40%
+		if(c==size-1) c--;
+		Y_train=chloro.getMatrix(0,c,0,0); //80%
+		Y_test=chloro.getMatrix(c+1,size-1,0,0); //20%
 	}
 	
 	private static void setXandTest(ArrayList<FVector> x)
@@ -119,11 +113,11 @@ public class LikePrediction {
 		}
 		//Shuffling array to remove any bias
 		real_deal=Shuffle2DArray.shuffleX(ret,n);
-		s=(6*n)/10;
-		s=n-1; //change later
+		s=(8*n)/10;
 		chloro=new Matrix(real_deal);
-		X_train=chloro.getMatrix(0,s,0,10+8); //60% 
-//		X_test=chloro.getMatrix(s+1,n-1,0,10); //40%
+		if(s==n-1) s--;
+		X_train=chloro.getMatrix(0,s,0,10+8); //80% 
+		X_test=chloro.getMatrix(s+1,n-1,0,10+8); //20%
 	}
 	
 	private static void Train()
@@ -137,7 +131,6 @@ public class LikePrediction {
 			Post post = facebookClient.fetchObject(idee,
 					  Post.class,
 					  Parameter.with("fields", "likes.summary(true),comments.summary(true),type,with_tags,updated_time,shares,place,picture,message_tags,message,link"));
-//			System.out.println(post.getType());
 			statuses.add(post);
 		}
 		Number_of_friends=facebookClient.fetchConnection("me/friends",User.class).getTotalCount();
@@ -251,23 +244,17 @@ public class LikePrediction {
 
 	public static Result Runner(String at)
 	{
-//		Scanner in=new Scanner(System.in);
-//		String at="";
-//		System.out.println("Enter access token");
-//		at=in.nextLine();
-//		in.close();
 		facebookClient = new DefaultFacebookClient(at);
-//		System.out.println("Hi, "+facebookClient.fetchObject("me", User.class).getName());
 		//Training predictor :
 		Train();
-		Matrix prediction=X_train.times(Theta);
+		
+		Matrix prediction=X_test.times(Theta);
 		double[][] pred,act;
 		pred=prediction.getArray();
-		act=Y_train.getArray();
+		act=Y_test.getArray();
 		int i,n;
-		n=Y_train.getRowDimension();
-		double error=0;
-		double count=0;
+		n=Y_test.getRowDimension();
+		double diff,error=0,count=0;
 		ArrayList<Long> predicted,actual;
 		predicted=new ArrayList<Long>();
 		actual=new ArrayList<Long>();
@@ -277,10 +264,8 @@ public class LikePrediction {
 			if(pred[i][0]<0) pred[i][0]=0;
 			if(Math.round(pred[i][0])>Number_of_friends) pred[i][0]=Number_of_friends;
 			error+=((double)(Math.round(pred[i][0])-(int)act[i][0]))*((double)(Math.round(pred[i][0])-(int)act[i][0]));
-			if(pred[i][0]-act[i][0]>10 || pred[i][0]-act[i][0]<-10)
-			{
-				count++;
-			}
+			diff=Math.abs(pred[i][0]-act[i][0]);
+			if(((diff*100)/act[i][0])>10.0) count++; //10% or more error
 			predicted.add(Math.round(pred[i][0]));
 			actual.add((long)act[i][0]);
 		}
@@ -293,7 +278,7 @@ public class LikePrediction {
 		LinkedHashMap<String,String> people=new LinkedHashMap<String,String>();	
 		String naam="";
 		int ex=0;
-		//Limiting factor (in terms of speed) :
+		//Bottleneck :
 		for(String y:likers.keySet())
 		{
 			if(ex>=10) break;
@@ -313,6 +298,5 @@ public class LikePrediction {
 		System.out.println("Ready to display!");
 		System.out.println("Prediction error : "+(100.0*((double)count/(double)n))+"%");
 		return ret;
-		//Hard coded training set as 100% of data
 	}
 }

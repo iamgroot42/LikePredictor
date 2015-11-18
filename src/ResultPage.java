@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -90,7 +89,6 @@ public class ResultPage extends HttpServlet {
 			writer.println("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>");
 			writer.println("<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js\"></script>");
 			
-
 			//Second line chart :
 			writer.print(" <script type=\"text/javascript\"src=\"https://www.google.com/jsapi?autoload={ 'modules':[{ 'name':'visualization','version':'1','packages':['corechart']}]}\"></script>");
 			writer.print("<script type=\"text/javascript\">");
@@ -118,32 +116,9 @@ public class ResultPage extends HttpServlet {
 			writer.print(" </script>");
 			writer.println("</head>");
 			writer.println("<body>");
-			//			writer.println("<div class='padding'>");
-			//			writer.println("<div class='row well'>");
-			//				writer.println("<div class='col-sm-12'>");
-			//					writer.println("<div class='panel panel-default'>");
-			//							writer.println("<div class='panel-body'>");
-			//								writer.println("<h class='lead'>");
-			//									writer.println("<center>");
-			//										writer.println(" Results!");
-			//									writer.println(" </center>");
-			//								writer.println("</h>");
-			//								writer.println("<p><center>");
-			//									writer.println("<img src='https://lh3.googleusercontent.com/uFp_tsTJboUY7kue5XAsGA=s28' width='28px' height='28px'>");
-			//								writer.println("</center></p>");
-			//							writer.println("</div>");
-			//					writer.println("</div>");
-			//				writer.println("</div>");
-			//			writer.println("</div>");
-			//		writer.println("</div>");
-			//			writer.println("Absolute training error : "+ret.getAbsolute_error());
-			//			writer.println("<br>");
-			//			writer.println("Percentage training error : "+ret.getPercentage_error());
-			//			writer.println("<br>");
-
+			
 			//Render chart :
 			writer.println("<div class=\"row\">");
-//			writer.println("")
 			writer.println("<div style=\"width:50%; height:50%;\" class=\"col-sm-6\" id=\"chart_div\"></div>");
 			writer.println("<div style=\"width:50%; height:50%;\" class=\"col-sm-6\" id=\"potato\"></div>");
 			writer.println("</div>");			
@@ -151,10 +126,10 @@ public class ResultPage extends HttpServlet {
 			writer.println("<div class='column col-sm-12 col-xs-11' id='main'>");
 			writer.println("<div class='padding'>");
 			writer.println("<div class='row well'>");
-			int j = 0, k;
-			long end;
+			int j = 0;
 			for(String x:ret.getPost_links())
 			{
+				if(j>=nono) break; //Display only testing set data
 				writer.println("<div class='col-sm-6'>");
 				writer.println("<div class='panel panel-default'>");
 				writer.println("<div class='panel-heading'>");
@@ -181,7 +156,6 @@ public class ResultPage extends HttpServlet {
 				writer.println("</div>");
 				writer.println("</div>");
 				writer.println("</div>");
-				//writer.print("PredLikers : ");
 				j++;
 			}
 			writer.println("</div>");

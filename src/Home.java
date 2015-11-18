@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,7 +18,7 @@ import javax.servlet.http.HttpSession;
 /**
  * Servlet implementation class Home
  */
-@WebServlet("/Home")
+@WebServlet("/")
 public class Home extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	public static String APP_ID = "412912138911681";
@@ -64,7 +63,6 @@ public class Home extends HttpServlet {
 		                "redirect_uri=" + URLEncodedRedirectURI + "&" +
 		                "client_secret=" + Home.APP_SECRET + "&" +
 		                "code=" + code;
-//		  response.getWriter().print("URL : "+authURL);
 		  URL url = new URL(authURL);
 		 
 		  String result = readURL(url);
