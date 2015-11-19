@@ -78,6 +78,7 @@ public class LikePrediction {
 		Matrix chloro=new Matrix(real_deal);
 		c=(6*size)/10;
 		if(c==size-1) c--;
+//		c=size-1;
 		Y_train=chloro.getMatrix(0,c,0,0); //80%
 		Y_test=chloro.getMatrix(c+1,size-1,0,0); //20%
 	}
@@ -116,6 +117,7 @@ public class LikePrediction {
 		s=(8*n)/10;
 		chloro=new Matrix(real_deal);
 		if(s==n-1) s--;
+//		s=n-1;
 		X_train=chloro.getMatrix(0,s,0,10+8); //80% 
 		X_test=chloro.getMatrix(s+1,n-1,0,10+8); //20%
 	}
