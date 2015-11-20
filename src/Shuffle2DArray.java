@@ -33,9 +33,8 @@ public class Shuffle2DArray {
 	//Same shuffle order to maintain 1-1 ordering b/w prediction vector and actual vector
 	public static double[][] shuffleY(double[][] x,int n)
 	{
-		int i;
+		int i=0;
 		double[][] ret=new double[n][1]; 
-		i=0;
 		for(Integer y:shuf)
 		{
 			ret[i][0]=x[y][0];

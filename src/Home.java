@@ -15,39 +15,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-/**
- * Servlet implementation class Home
- */
 @WebServlet("/Home")
 public class Home extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	public static String APP_ID = "412912138911681";
     public static String APP_SECRET = "87ea15d7eef3d69efb996f7e29f4f151";
 
-    /**
-     * Default constructor. 
-     */
-    public Home() {
-        // TODO Auto-generated constructor stub
-    }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-
     private String readURL(URL url) throws IOException {
     	 
     	  ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	  InputStream is = url.openStream();
-    	 
     	  int r;
-    	 
     	  while ((r = is.read()) != -1) {
     	   baos.write(r);
     	  }
-    	 
     	  return new String(baos.toByteArray());
-    	 
     	 }
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -64,12 +46,9 @@ public class Home extends HttpServlet {
 		                "client_secret=" + Home.APP_SECRET + "&" +
 		                "code=" + code;
 		  URL url = new URL(authURL);
-		 
 		  String result = readURL(url);
 		  String[] pairs = result.split("&");
-		 
 		  for (String pair : pairs) {
-		 
 		   String[] kv = pair.split("=");
 		   if (kv[0].equals("access_token")) {
 		    MY_ACCESS_TOKEN = kv[1];
@@ -98,12 +77,4 @@ public class Home extends HttpServlet {
 		  writer.println("</form>");
 		  writer.close();
 	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stud
-	}
-
 }

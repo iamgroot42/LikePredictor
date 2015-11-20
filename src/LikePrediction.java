@@ -124,11 +124,14 @@ public class LikePrediction {
 	{		
 		System.out.println("Training...");
 		ArrayList<Post> statuses=new ArrayList<Post>();
+		String idee;
+		Post post;
+		int hh,mm,time,s;
 		Connection<Post> pageFeed = facebookClient.fetchConnection("me/posts",Post.class,Parameter.with("limit", 100));
 		for(Post i:pageFeed.getData())
 		{
-			String idee=i.getId();
-			Post post = facebookClient.fetchObject(idee,
+			idee=i.getId();
+			post = facebookClient.fetchObject(idee,
 					  Post.class,
 					  Parameter.with("fields", "likes.summary(true),comments.summary(true),type,with_tags,updated_time,shares,place,picture,message_tags,message,link"));
 			statuses.add(post);
@@ -172,8 +175,6 @@ public class LikePrediction {
 			{
 				useless.setPlace(1);
 			}		
-			
-			int hh,mm;
 			if(x.getUpdatedTime()!=null)
 			{
 				hh=x.getUpdatedTime().getHours();
@@ -184,11 +185,10 @@ public class LikePrediction {
 				hh=x.getCreatedTime().getHours();
 				mm=x.getCreatedTime().getMinutes();
 			}
-			int time=hh*60+mm;
+			time=hh*60+mm;
 			useless.setTime_of_day(time);
 			useless.setTime_of_daySQ(time*time);
-			
-			int s=0;
+			s=0;
 			if(x.getMessage()!=null)
 			{
 				s=x.getMessage().length();
@@ -233,9 +233,6 @@ public class LikePrediction {
 		constructY(why);
 		//Maintain 1-1 mapping in link IDs
 		links=Shuffle2DArray.shuffleLinks(pseudo_links);
-		
-		System.out.println(X_train.getRowDimension()+"x"+X_train.getColumnDimension());
-		System.out.println(Y_train.getRowDimension()+"x"+Y_train.getColumnDimension());
 		Matrix X_transpose=X_train.transpose();
 		Matrix sampletin=X_transpose.times(X_train);
 		Matrix sampletinv=pinv(sampletin);
@@ -290,12 +287,12 @@ public class LikePrediction {
 		ret.setAbsolute_error(error);
 		ret.setPercentage_error(relative_error);
 		ret.setActual_likes(actual);
+		ret.setPost_links(links);
 		ret.setPredicted_likes(predicted);
 		try {
 			Tlikers.join();
 		} catch(InterruptedException ex) { System.out.println("Fetching Interrupted!"); }
 		ret.setLikers(GetLikers.people);
-		ret.setPost_links(links);
 		System.out.println("Ready to display!");
 		System.out.println("Prediction error : "+(100.0*((double)count/(double)n))+"%");
 		return ret;
