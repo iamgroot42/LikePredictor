@@ -76,7 +76,7 @@ public class LikePrediction {
 		}
 		double real_deal[][]=Shuffle2DArray.shuffleY(rekt, size); 
 		Matrix chloro=new Matrix(real_deal);
-		c=(6*size)/10;
+		c=(8*size)/10;
 		if(c==size-1) c--;
 		Y_train=chloro.getMatrix(0,c,0,0); //80%
 		Y_test=chloro.getMatrix(c+1,size-1,0,0); //20%
@@ -234,6 +234,8 @@ public class LikePrediction {
 		//Maintain 1-1 mapping in link IDs
 		links=Shuffle2DArray.shuffleLinks(pseudo_links);
 		
+		System.out.println(X_train.getRowDimension()+"x"+X_train.getColumnDimension());
+		System.out.println(Y_train.getRowDimension()+"x"+Y_train.getColumnDimension());
 		Matrix X_transpose=X_train.transpose();
 		Matrix sampletin=X_transpose.times(X_train);
 		Matrix sampletinv=pinv(sampletin);
