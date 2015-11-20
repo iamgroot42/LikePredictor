@@ -241,7 +241,8 @@ public class LikePrediction {
 		Theta=tempu.times(Y_train);
 		System.out.println("Training complete!");
 	}
-
+	//private static LinkedHashMap<String,String> people=new LinkedHashMap<String,String>();
+	//private static LinkedHashMap<String,Long> likers;
 	public static Result Runner(String at)
 	{
 		facebookClient = new DefaultFacebookClient(at);
@@ -258,7 +259,7 @@ public class LikePrediction {
 		ArrayList<Long> predicted,actual;
 		predicted=new ArrayList<Long>();
 		actual=new ArrayList<Long>();
-		LinkedHashMap<String,Long> likers;
+		//LinkedHashMap<String,Long> likers;
 		for(i=0;i<n;i++)
 		{
 			if(pred[i][0]<0) pred[i][0]=0;
@@ -274,26 +275,24 @@ public class LikePrediction {
 		System.out.println("Sorting complete!");
 		error/=2*n;
 		double relative_error=(count*100)/n;
-		likers=WhoWillLike.getMapping();
-		LinkedHashMap<String,String> people=new LinkedHashMap<String,String>();	
-		String naam="";
-		int ex=0;
+		GetLikers.likers=WhoWillLike.getMapping();
+		//LinkedHashMap<String,String> people=new LinkedHashMap<String,String>();	
+		//String naam="";
+		//int ex=0;
+		//likers, people defined as class variables to use in thread
 		//Bottleneck :
-		for(String y:likers.keySet())
-		{
-			if(ex>=10) break;
-			naam=facebookClient.fetchObject(y, User.class).getName();
-			people.put(y, naam);
-			ex++;
-		}
-		System.out.println("Fetching complete!");
+		Thread Tlikers; GetLikers ob = new GetLikers(facebookClient);
+		(Tlikers = new Thread(ob)).start();
 		//Preparing return object
 		Result ret=new Result();
 		ret.setAbsolute_error(error);
 		ret.setPercentage_error(relative_error);
 		ret.setActual_likes(actual);
 		ret.setPredicted_likes(predicted);
-		ret.setLikers(people);
+		try {
+			Tlikers.join();
+		} catch(InterruptedException ex) { System.out.println("Fetching Interrupted!"); }
+		ret.setLikers(GetLikers.people);
 		ret.setPost_links(links);
 		System.out.println("Ready to display!");
 		System.out.println("Prediction error : "+(100.0*((double)count/(double)n))+"%");
