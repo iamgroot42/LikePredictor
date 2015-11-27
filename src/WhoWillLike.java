@@ -4,7 +4,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,12 @@ public class WhoWillLike {
 	private static long total=0;
 	private static List<Entry<String, Long>> list;
 	
+	public static void killIt()
+	{
+		mapping.clear();
+		list.clear();
+		total=0;
+	}
 	public static void sortIt()
 	{
 		Set<Entry<String, Long>> set = mapping.entrySet();

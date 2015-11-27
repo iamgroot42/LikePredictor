@@ -152,6 +152,10 @@ public class ResultPage extends HttpServlet {
 			writer.println("<script src='js/scripts.js'></script>");
 			writer.println("</body>");
 			writer.println("</html>");
+			//Clear graph and like histograms:
+//			ParallelGraph.killIt();
+//			WhoWillLike.killIt();
+//			session.invalidate();
 		}
 		catch(Exception e)
 		{

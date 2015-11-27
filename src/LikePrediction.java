@@ -143,13 +143,16 @@ public class LikePrediction {
 		int i=0;
 		links=new ArrayList<String>();
 		ArrayList<String> pseudo_links=new ArrayList<String>();
+		Thread graph_processing;
+		ParallelGraph pg=new ParallelGraph(statuses);
+		(graph_processing=new Thread(pg)).start();		
 		for(Post x:statuses)
 		{
 			pseudo_links.add("https://www.facebook.com/"+x.getId());
 			FVector useless=new FVector();
 			if(x.getLikesCount()!=null)
 			{
-				if(x.getLikes().getData()!=null) WhoWillLike.addLike(x.getLikes().getData());
+				if(x.getLikes().getData()!=null) {}
 				why.add((double)x.getLikesCount());
 			}
 			else
@@ -238,6 +241,9 @@ public class LikePrediction {
 		Matrix sampletinv=pinv(sampletin);
 		Matrix tempu=sampletinv.times(X_transpose);
 		Theta=tempu.times(Y_train);
+		try {
+			graph_processing.join();
+		} catch(InterruptedException ex) { System.out.println("Graph construction Interrupted!"); }
 		System.out.println("Training complete!");
 	}
 	//private static LinkedHashMap<String,String> people=new LinkedHashMap<String,String>();
@@ -265,7 +271,8 @@ public class LikePrediction {
 			if(Math.round(pred[i][0])>Number_of_friends) pred[i][0]=Number_of_friends;
 			error+=((double)(Math.round(pred[i][0])-(int)act[i][0]))*((double)(Math.round(pred[i][0])-(int)act[i][0]));
 			diff=Math.abs(pred[i][0]-act[i][0]);
-			if(((diff*100)/act[i][0])>10.0) count++; //10% or more error
+//			if(((diff*100)/act[i][0])>10.0) count++; //10% or more error
+			if(diff>5) count++;
 			predicted.add(Math.round(pred[i][0]));
 			actual.add((long)act[i][0]);
 		}
