@@ -19,9 +19,10 @@ public class WhoWillLike {
 	
 	public static void killIt()
 	{
-		mapping.clear();
-		list.clear();
+		if(mapping != null) mapping.clear();
+		if(list != null) list.clear();
 		total=0;
+		System.out.println("WhoWillLike data cleared.");
 	}
 	public static void sortIt()
 	{

@@ -130,7 +130,7 @@ public class ResultPage extends HttpServlet {
 				else
 				{
 					writer.println("<h4 style=\"color:red\">");
-					writer.println("Inorrect prediction");
+					writer.println("Incorrect prediction");
 				}
 				writer.println("</h4>");
 				writer.println("</div>");

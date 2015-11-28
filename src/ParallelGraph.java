@@ -10,6 +10,7 @@ public class ParallelGraph implements Runnable {
 	public static void killIt()
 	{
 		data.clear();
+		System.out.println("Parallel Graph data cleared");
 	}
 	public void run()
 	{		
