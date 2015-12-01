@@ -259,6 +259,7 @@ public class LikePrediction {
 	//private static LinkedHashMap<String,Long> likers;
 	public static Result Runner(String at)
 	{
+		
 		facebookClient = new DefaultFacebookClient(at);
 		//Training predictor :
 		Train();
@@ -320,6 +321,9 @@ public class LikePrediction {
 			Tlikers.join();
 		} catch(InterruptedException ex) { System.out.println("Fetching Interrupted!"); }
 		ret.setLikers(GetLikers.people);
+		for(String str : ret.getLikers().keySet()) {
+			System.out.println(str);
+		}
 		System.out.println("Ready to display!");
 		System.out.println("Prediction error : "+(100.0*((double)count/(double)n))+"%");
 		return ret;

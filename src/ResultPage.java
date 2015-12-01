@@ -46,10 +46,11 @@ public class ResultPage extends HttpServlet {
 			HashMap<String,String> iterate=ret.getLikers();
 			ArrayList<Long> actual=ret.getActual_likes();
 			ArrayList<Long> predicted=ret.getPredicted_likes();
-			long tot=WhoWillLike.getTotal();
+			long tot=WhoWillLike.getTotal(); 
 			int i=0;
 			for(String iterator : iterate.keySet())
 			{
+				System.out.println(iterate.get(iterator));
 				if(i>=10) break; //Top 10 only
 				writer.print("['");
 				writer.print(iterate.get(iterator));

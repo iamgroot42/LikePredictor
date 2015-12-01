@@ -35,8 +35,8 @@ public class Home extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//Clearing previous data :
-		//ParallelGraph.killIt();
-		//WhoWillLike.killIt();
+		ParallelGraph.killIt();
+		WhoWillLike.killIt();
 		
 		response.setContentType("text/html");
 		PrintWriter writer = response.getWriter();

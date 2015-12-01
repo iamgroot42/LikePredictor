@@ -12,6 +12,7 @@ public class GetLikers implements Runnable {
 		facebookClient = client;
 	}
 	public void run() {
+		people.clear();
 		int ex = 0;
 		String naam="";
 		for(String y:likers.keySet())

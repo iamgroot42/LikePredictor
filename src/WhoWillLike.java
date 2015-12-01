@@ -19,10 +19,8 @@ public class WhoWillLike {
 	
 	public static void killIt()
 	{
-		if(mapping != null) mapping.clear();
-		if(list != null) list.clear();
-		total=0;
-		System.out.println("WhoWillLike data cleared.");
+		mapping=new LinkedHashMap<String,Long>();
+		total = 0;
 	}
 	public static void sortIt()
 	{
