@@ -74,7 +74,9 @@ public class LikePrediction {
 		{
 			rekt[i][0]=y.get(i);
 		}
-		double real_deal[][]=Shuffle2DArray.shuffleY(rekt, size); 
+		double real_deal[][]=Shuffle2DArray.shuffleY(rekt, size);
+//		Temp:
+//		double real_deal[][]=rekt;
 		Matrix chloro=new Matrix(real_deal);
 		c=(8*size)/10;
 		if(c==size-1) c--;
@@ -113,6 +115,8 @@ public class LikePrediction {
 		}
 		//Shuffling array to remove any bias
 		real_deal=Shuffle2DArray.shuffleX(ret,n);
+//		temp:
+//		real_deal=ret;
 		s=(8*n)/10;
 		chloro=new Matrix(real_deal);
 		if(s==n-1) s--;
@@ -149,6 +153,9 @@ public class LikePrediction {
 		for(Post x:statuses)
 		{
 			pseudo_links.add("https://www.facebook.com/"+x.getId());
+			try {
+				System.out.println("https://www.facebook.com/"+x.getId() + " " + x.getLikesCount());
+			} catch(Exception e) {}
 			FVector useless=new FVector();
 			if(x.getLikesCount()!=null)
 			{
@@ -236,6 +243,8 @@ public class LikePrediction {
 		constructY(why);
 		//Maintain 1-1 mapping in link IDs
 		links=Shuffle2DArray.shuffleLinks(pseudo_links);
+//		temp:
+//		links=pseudo_links;
 		Matrix X_transpose=X_train.transpose();
 		Matrix sampletin=X_transpose.times(X_train);
 		Matrix sampletinv=pinv(sampletin);
@@ -265,17 +274,21 @@ public class LikePrediction {
 		predicted=new ArrayList<Long>();
 		actual=new ArrayList<Long>();
 		//LinkedHashMap<String,Long> likers;
+		long sme=0;
 		for(i=0;i<n;i++)
 		{
 			if(pred[i][0]<0) pred[i][0]=0;
 			if(Math.round(pred[i][0])>Number_of_friends) pred[i][0]=Number_of_friends;
 			error+=((double)(Math.round(pred[i][0])-(int)act[i][0]))*((double)(Math.round(pred[i][0])-(int)act[i][0]));
 			diff=Math.abs(pred[i][0]-act[i][0]);
+			sme+=diff*diff;
 //			if(((diff*100)/act[i][0])>10.0) count++; //10% or more error
 			if(diff>5) count++;
 			predicted.add(Math.round(pred[i][0]));
 			actual.add((long)act[i][0]);
 		}
+		sme/=n;
+		System.out.println("SME : "+sme);
 		//Sort histogram
 		WhoWillLike.sortIt();
 		System.out.println("Sorting complete!");
@@ -295,6 +308,13 @@ public class LikePrediction {
 		ret.setPercentage_error(relative_error);
 		ret.setActual_likes(actual);
 		ret.setPost_links(links);
+		System.out.println(actual.size() + " " + links.size());
+//		for(int k = 0; k < actual.size(); k++) {
+//			System.out.println(links.get(links.size() - actual.size() + k) + " " + actual.get(k));
+//		}
+		//for(String str : links) System.out.println(str);
+		
+		//System.out.println(links + System.lineSeparator() + predicted);
 		ret.setPredicted_likes(predicted);
 		try {
 			Tlikers.join();

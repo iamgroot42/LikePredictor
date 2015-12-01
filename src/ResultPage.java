@@ -19,6 +19,7 @@ public class ResultPage extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		System.out.println("was called");
 		response.setContentType("text/html");
 		PrintWriter writer = response.getWriter();
 		HttpSession session=request.getSession();
@@ -113,9 +114,17 @@ public class ResultPage extends HttpServlet {
 			writer.println("<div class='padding'>");
 			writer.println("<div class='row well'>");
 			int j = 0;
-			for(String x:ret.getPost_links())
-			{
-				if(j>=nono) break; //Display only testing set data
+			int max_size = ret.getPost_links().size();
+			ArrayList<String> links = ret.getPost_links();
+			ArrayList<Long> temp_actual = ret.getActual_likes();
+			System.out.println("In Result");
+			for(int k = 0; k < temp_actual.size(); k++)
+			//for(String x:ret.getPost_links())
+			{	
+				
+				String x = links.get(links.size() - temp_actual.size() + k);
+				System.out.println(x + " " + actual.get(k));
+				//(j>=nono) break; //Display only testing set data
 				writer.println("<div class='col-sm-6'>");
 				writer.println("<div class='panel panel-default'>");
 				writer.println("<div class='panel-heading'>");
